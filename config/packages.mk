@@ -17,7 +17,7 @@ PRODUCT_PACKAGES += \
     Seedvault \
     ThemePicker \
     ThemesStub \
-    TrebuchetQuickStep \
+    Launcher3QuickStep \
     Updater
 
 ifneq ($(PRODUCT_NO_CAMERA),true)
