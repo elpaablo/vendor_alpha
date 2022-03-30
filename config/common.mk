@@ -153,6 +153,10 @@ PRODUCT_PRODUCT_PROPERTIES += \
 PRODUCT_PRODUCT_PROPERTIES += \
     ro.input.video_enabled=false
 
+# Disable mobile data by default
+PRODUCT_PRODUCT_PROPERTIES += \
+    ro.com.android.mobiledata=false
+
 # Packages
 include vendor/alpha/config/packages.mk
 
