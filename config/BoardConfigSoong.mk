@@ -28,6 +28,7 @@ SOONG_CONFIG_alphaGlobalVars += \
     target_power_libperfmgr_mode_extension_lib \
     sdmcore_has_is_display_hw_available_func \
     gralloc_handle_has_custom_content_md_reserved_size \
+    bootloader_message_offset \
     gralloc_handle_has_reserved_size \
     gralloc_handle_has_ubwcp_format \
     target_surfaceflinger_udfps_lib \
@@ -59,6 +60,7 @@ define addVar
 endef
 
 # Set default values
+BOOTLOADER_MESSAGE_OFFSET ?= 0
 TARGET_SURFACEFLINGER_UDFPS_LIB ?= surfaceflinger_udfps_lib
 TARGET_INIT_VENDOR_LIB ?= vendor_init
 TARGET_POWER_LIBPERFMGR_MODE_EXTENSION_LIB ?= libperfmgr-ext
@@ -73,6 +75,7 @@ TARGET_TRUST_USB_CONTROL_ENABLE ?= 1
 TARGET_TRUST_USB_CONTROL_DISABLE ?= 0
 
 # Soong value variables
+SOONG_CONFIG_alphaGlobalVars_bootloader_message_offset := $(BOOTLOADER_MESSAGE_OFFSET)
 SOONG_CONFIG_alphaGlobalVars_camera_skip_kind_check := $(CAMERA_SKIP_KIND_CHECK)
 SOONG_CONFIG_alphaGlobalVars_target_camera_package_name := $(TARGET_CAMERA_PACKAGE_NAME)
 SOONG_CONFIG_alphaGlobalVars_aapt_version_code := $(shell date -u +%Y%m%d)
@@ -92,6 +95,7 @@ SOONG_CONFIG_alphaQcomVars_qti_vibrator_use_effect_stream := $(TARGET_QTI_VIBRAT
 SOONG_CONFIG_alphaGlobalVars_target_trust_usb_control_path := $(TARGET_TRUST_USB_CONTROL_PATH)
 SOONG_CONFIG_alphaGlobalVars_target_trust_usb_control_enable := $(TARGET_TRUST_USB_CONTROL_ENABLE)
 SOONG_CONFIG_alphaGlobalVars_target_trust_usb_control_disable := $(TARGET_TRUST_USB_CONTROL_DISABLE)
+
 ifneq ($(filter $(QSSI_SUPPORTED_PLATFORMS),$(TARGET_BOARD_PLATFORM)),)
 SOONG_CONFIG_alphaQcomVars_qcom_display_headers_namespace := vendor/qcom/opensource/commonsys-intf/display
 else

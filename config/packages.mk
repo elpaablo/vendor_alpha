@@ -44,7 +44,6 @@ PRODUCT_PACKAGES += \
     Recorder \
     Seedvault \
     OmniJaws \
-    OpenDelta \
     Ripple \
     Panic
 
@@ -71,8 +70,7 @@ ifneq ($(TARGET_BUILD_GAPPS),true)
 PRODUCT_PACKAGES += \
     Etar \
     LatinIME \
-    messaging \
-    SetupWizard
+    messaging
 endif
 
 # Include explicitly to work around GMS issues
