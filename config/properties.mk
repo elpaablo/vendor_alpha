@@ -110,3 +110,8 @@ ifeq ($(TARGET_BUILD_DEVICE_AS_WEBCAM), true)
   PRODUCT_VENDOR_PROPERTIES += \
     ro.usb.uvc.enabled=true
 endif
+
+ifneq ($(TARGET_FACE_UNLOCK_SUPPORTED),false)
+  PRODUCT_SYSTEM_EXT_PROPERTIES += \
+    ro.face.sense_service=true
+endif
