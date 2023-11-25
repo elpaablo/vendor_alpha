@@ -5,6 +5,7 @@ $(call inherit-product, vendor/alpha/config/features.mk)
 $(call inherit-product, vendor/alpha/config/properties.mk)
 $(call inherit-product, vendor/alpha/config/packages.mk)
 $(call inherit-product, vendor/alpha/config/audio.mk)
+$(call inherit-product-if-exists, vendor/pixel-framework/config.mk)
 
 PRODUCT_BRAND ?= AlphaDroid
 TARGET_SCREEN_WIDTH ?= 1080
