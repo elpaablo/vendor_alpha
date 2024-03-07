@@ -83,7 +83,8 @@ PRODUCT_PACKAGES += \
 
 # Config
 PRODUCT_PACKAGES += \
-    SimpleDeviceConfig
+    SimpleDeviceConfig \
+    SimpleSettingsConfig
 
 # Telephony - CLO
 PRODUCT_PACKAGES += \
