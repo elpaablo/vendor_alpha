@@ -51,7 +51,8 @@ SOONG_CONFIG_alphaGlobalVars += \
     target_trust_usb_control_path \
     target_trust_usb_control_enable \
     target_trust_usb_control_disable \
-    uses_egl_display_array
+    uses_egl_display_array \
+    uses_oplus_touch
 
 SOONG_CONFIG_NAMESPACES += alphaNvidiaVars
 SOONG_CONFIG_alphaNvidiaVars += \
@@ -82,6 +83,7 @@ SOONG_CONFIG_alphaQcomVars_no_fm_firmware := $(TARGET_QCOM_NO_FM_FIRMWARE)
 SOONG_CONFIG_alphaQcomVars_qti_vibrator_use_effect_stream := $(TARGET_QTI_VIBRATOR_USE_EFFECT_STREAM)
 SOONG_CONFIG_alphaQcomVars_supports_extended_compress_format := $(AUDIO_FEATURE_ENABLED_EXTENDED_COMPRESS_FORMAT)
 SOONG_CONFIG_alphaQcomVars_uses_pre_uplink_features_netmgrd := $(TARGET_USES_PRE_UPLINK_FEATURES_NETMGRD)
+SOONG_CONFIG_alphaGlobalVars_uses_oplus_touch := $(TARGET_USES_OPLUS_TOUCH)
 
 # Set default values
 BOOTLOADER_MESSAGE_OFFSET ?= 0
