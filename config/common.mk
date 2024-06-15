@@ -31,6 +31,7 @@ PRODUCT_MINIMIZE_JAVA_DEBUG_INFO := true
 # but also allow explicit overriding for testing and development.
 SYSTEM_OPTIMIZE_JAVA ?= true
 SYSTEMUI_OPTIMIZE_JAVA ?= true
+FULL_SYSTEM_OPTIMIZE_JAVA ?= true
 
 # Disable vendor restrictions
 PRODUCT_RESTRICT_VENDOR_FILES := false
