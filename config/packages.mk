@@ -14,6 +14,8 @@ PRODUCT_PACKAGES += \
     LineageParts \
     LineageSettingsProvider \
     LineageSetupWizard \
+    LMOFreeform \
+    LMOFreeformSidebar \
     OmniJaws \
     OmniStyle \
     Profiles \
@@ -22,7 +24,7 @@ PRODUCT_PACKAGES += \
     Seedvault \
     ThemePicker \
     ThemesStub \
-    Updater \
+    Updater
 
 ifneq ($(PRODUCT_NO_CAMERA),true)
   PRODUCT_PACKAGES += \
