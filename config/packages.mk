@@ -1,7 +1,7 @@
 PRODUCT_PACKAGES += \
     ThemePicker \
 
-# Extra tools in YAAP
+# Extra tools
 PRODUCT_PACKAGES += \
     bash \
     curl \
@@ -31,7 +31,7 @@ PRODUCT_PACKAGES += \
     mkfs.ntfs \
     mount.ntfs
 
-# YAAP packages
+# alpha packages
 PRODUCT_PACKAGES += \
     Aperture \
     AvatarPicker \
@@ -42,11 +42,12 @@ PRODUCT_PACKAGES += \
     TrichromeWebView \
     TrichromeChrome \
     Recorder \
-    Seedvault \
-    OmniJaws \
-    OpenDelta \
-    Ripple \
-    Panic
+
+#     Seedvault \
+#     OmniJaws \
+#     OpenDelta \
+#     Ripple \
+#     Panic \
 
 # TextClassifier
 PRODUCT_PACKAGES += \
