@@ -31,11 +31,11 @@ import urllib.request
 DEBUG = False
 default_manifest = ".repo/manifest.xml"
 
-custom_local_manifest = ".repo/local_manifests/yaap_manifest.xml"
-custom_default_revision = "fifteen"
-custom_dependencies = "yaap.dependencies"
-org_manifest = "yaap"  # leave empty if org is provided in manifest
-org_display = "YAAP"  # needed for displaying
+custom_local_manifest = ".repo/local_manifests/alpha_manifest.xml"
+custom_default_revision = "alpha-15"
+custom_dependencies = "alpha.dependencies"
+org_manifest = "alpha"  # leave empty if org is provided in manifest
+org_display = "AlphaDroid-Project"  # needed for displaying
 
 github_auth = None
 
@@ -295,9 +295,9 @@ def main():
         repo_path = get_from_manifest(device)
         if repo_path:
             fetch_dependencies(repo_path)
-        else:
-            print("Trying dependencies-only mode on a "
-                  "non-existing device tree?")
+#        else:
+#            print("Trying dependencies-only mode on a "
+#                  "non-existing device tree?")
         sys.exit()
 
     print("Device {0} not found. Attempting to retrieve device repository from "

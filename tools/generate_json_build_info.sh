@@ -4,7 +4,7 @@ GREEN="\033[1;32m"
 YELLOW="\033[1;33m"
 NC="\033[0m"
 
-NON_OFFICIAL_TAG="HOMEMADE"
+NON_OFFICIAL_TAG="Unofficial"
 
 findPayloadOffset() {
     build=$1

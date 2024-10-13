@@ -1,7 +1,7 @@
 
 bootstrap_go_package {
-    name: "soong-yaap-generator",
-    pkgPath: "yaap/soong/generator",
+    name: "soong-alpha-generator",
+    pkgPath: "alpha/soong/generator",
     deps: [
         "blueprint",
         "blueprint-pathtools",
@@ -16,11 +16,11 @@ bootstrap_go_package {
     pluginFor: ["soong_build"],
 }
 
-yaap_generator {
+alpha_generator {
     name: "generated_kernel_includes",
 
     // The headers make command
-    cmd: "PATH=$(ORIG_PATH):$(TARGET_KERNEL_CLANG_PATH)/bin make $(KERNEL_MAKE_FLAGS) -C $(TARGET_KERNEL_SOURCE) O=$(KERNEL_BUILD_OUT_PREFIX)$(genDir) ARCH=$(KERNEL_ARCH) $(KERNEL_CROSS_COMPILE) headers_install && vendor/yaap/tools/clean_headers.sh $(KERNEL_BUILD_OUT_PREFIX)$(genDir)",
+    cmd: "PATH=$(ORIG_PATH):$(TARGET_KERNEL_CLANG_PATH)/bin make $(KERNEL_MAKE_FLAGS) -C $(TARGET_KERNEL_SOURCE) O=$(KERNEL_BUILD_OUT_PREFIX)$(genDir) ARCH=$(KERNEL_ARCH) $(KERNEL_CROSS_COMPILE) headers_install && vendor/alpha/tools/clean_headers.sh $(KERNEL_BUILD_OUT_PREFIX)$(genDir)",
 
     // Directories that can be imported by a cc_* module generated_headers property
     export_include_dirs: [
@@ -62,7 +62,7 @@ cc_library_headers {
 soong_config_module_type {
     name: "aapt_version_code",
     module_type: "java_defaults",
-    config_namespace: "lineageGlobalVars",
+    config_namespace: "alphaGlobalVars",
     value_variables: ["aapt_version_code"],
     properties: ["aaptflags"],
 }
@@ -82,7 +82,7 @@ aapt_version_code {
 soong_config_module_type {
     name: "sdmcore_has_is_display_hw_available",
     module_type: "cc_defaults",
-    config_namespace: "lineageGlobalVars",
+    config_namespace: "alphaGlobalVars",
     bool_variables: ["sdmcore_has_is_display_hw_available_func"],
     properties: ["cflags"],
 }
@@ -99,7 +99,7 @@ sdmcore_has_is_display_hw_available {
 soong_config_module_type {
     name: "gralloc_handle_reserved_size",
     module_type: "cc_defaults",
-    config_namespace: "lineageGlobalVars",
+    config_namespace: "alphaGlobalVars",
     bool_variables: ["gralloc_handle_has_reserved_size"],
     properties: ["export_cflags"],
 }
@@ -115,7 +115,7 @@ gralloc_handle_reserved_size {
 soong_config_module_type {
     name: "gralloc_handle_custom_content_md_reserved_size",
     module_type: "cc_defaults",
-    config_namespace: "lineageGlobalVars",
+    config_namespace: "alphaGlobalVars",
     bool_variables: ["gralloc_handle_has_custom_content_md_reserved_size"],
     properties: ["export_cflags"],
 }
@@ -132,7 +132,7 @@ gralloc_handle_custom_content_md_reserved_size {
 soong_config_module_type {
     name: "gralloc_handle_ubwcp_format",
     module_type: "cc_defaults",
-    config_namespace: "lineageGlobalVars",
+    config_namespace: "alphaGlobalVars",
     bool_variables: ["gralloc_handle_has_ubwcp_format"],
     properties: ["export_cflags"],
 }
@@ -149,7 +149,7 @@ gralloc_handle_ubwcp_format {
 soong_config_module_type {
     name: "surfaceflinger_udfps_lib",
     module_type: "cc_defaults",
-    config_namespace: "lineageGlobalVars",
+    config_namespace: "alphaGlobalVars",
     value_variables: ["target_surfaceflinger_udfps_lib"],
     properties: [
         "cppflags",
@@ -160,7 +160,7 @@ soong_config_module_type {
 soong_config_module_type {
     name: "target_camera_package_name",
     module_type: "cc_defaults",
-    config_namespace: "lineageGlobalVars",
+    config_namespace: "alphaGlobalVars",
     value_variables: ["target_camera_package_name"],
     properties: ["cppflags"],
 }
@@ -187,7 +187,7 @@ surfaceflinger_udfps_lib {
 soong_config_module_type {
     name: "trust_usb_control",
     module_type: "cc_defaults",
-    config_namespace: "lineageGlobalVars",
+    config_namespace: "alphaGlobalVars",
     value_variables: [
         "target_trust_usb_control_path",
         "target_trust_usb_control_enable",
@@ -214,7 +214,7 @@ trust_usb_control {
 soong_config_module_type {
     name: "surfaceflinger_qcom_extensions",
     module_type: "cc_defaults",
-    config_namespace: "lineageQcomVars",
+    config_namespace: "alphaQcomVars",
     value_variables: ["qcom_display_headers_namespace"],
     properties: [
         "cppflags",
@@ -225,7 +225,7 @@ soong_config_module_type {
 soong_config_module_type {
     name: "camera_skip_kind_check",
     module_type: "cc_defaults",
-    config_namespace: "lineageGlobalVars",
+    config_namespace: "alphaGlobalVars",
     bool_variables: ["camera_skip_kind_check"],
     properties: [
         "cppflags",
@@ -257,7 +257,7 @@ surfaceflinger_qcom_extensions {
 soong_config_module_type {
     name: "no_camera_smooth_apis",
     module_type: "cc_defaults",
-    config_namespace: "lineageQcomVars",
+    config_namespace: "alphaQcomVars",
     bool_variables: ["no_camera_smooth_apis"],
     properties: ["cppflags"],
 }
@@ -274,7 +274,7 @@ no_camera_smooth_apis {
 soong_config_module_type {
     name: "camera_needs_client_info",
     module_type: "cc_defaults",
-    config_namespace: "lineageQcomVars",
+    config_namespace: "alphaQcomVars",
     bool_variables: ["camera_needs_client_info"],
     properties: ["cppflags"],
 }
@@ -291,7 +291,7 @@ camera_needs_client_info {
 soong_config_module_type {
     name: "qti_camera_device",
     module_type: "cc_defaults",
-    config_namespace: "lineageQcomVars",
+    config_namespace: "alphaQcomVars",
     bool_variables: ["uses_qti_camera_device"],
     properties: [
         "cppflags",
@@ -312,7 +312,7 @@ qti_camera_device {
 soong_config_module_type {
     name: "vendor_init",
     module_type: "cc_defaults",
-    config_namespace: "lineageGlobalVars",
+    config_namespace: "alphaGlobalVars",
     value_variables: ["target_init_vendor_lib"],
     properties: ["whole_static_libs"],
 }
@@ -329,7 +329,7 @@ vendor_init {
 soong_config_module_type {
     name: "qti_cryptfshw_qsee",
     module_type: "cc_defaults",
-    config_namespace: "lineageQcomVars",
+    config_namespace: "alphaQcomVars",
     bool_variables: ["should_wait_for_qsee"],
     properties: ["cflags"],
 }
@@ -346,7 +346,7 @@ qti_cryptfshw_qsee {
 soong_config_module_type {
     name: "extended_compress_format",
     module_type: "cc_defaults",
-    config_namespace: "lineageQcomVars",
+    config_namespace: "alphaQcomVars",
     bool_variables: ["supports_extended_compress_format"],
     properties: ["cflags"],
 }
@@ -363,7 +363,7 @@ extended_compress_format {
 soong_config_module_type {
     name: "power_libperfmgr",
     module_type: "cc_defaults",
-    config_namespace: "lineageGlobalVars",
+    config_namespace: "alphaGlobalVars",
     value_variables: ["target_power_libperfmgr_mode_extension_lib"],
     properties: [
         "whole_static_libs",
@@ -382,7 +382,7 @@ power_libperfmgr {
 soong_config_module_type {
     name: "qti_vibrator_hal",
     module_type: "cc_defaults",
-    config_namespace: "lineageQcomVars",
+    config_namespace: "alphaQcomVars",
     bool_variables: ["qti_vibrator_use_effect_stream"],
     value_variables: ["qti_vibrator_effect_lib"],
     properties: [

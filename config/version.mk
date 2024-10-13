@@ -14,29 +14,42 @@
 
 # Versioning System
 BUILD_DATE := $(shell date +%Y%m%d)
-TARGET_PRODUCT_SHORT := $(subst yaap_,,$(YAAP_BUILD))
+TARGET_PRODUCT_SHORT := $(subst alpha_,,$(ALPHA_BUILD))
 
-YAAP_BUILDTYPE ?= HOMEMADE
-YAAP_BUILD_VERSION := $(PLATFORM_VERSION)
-YAAP_VERSION := $(YAAP_BUILD_VERSION)-$(YAAP_BUILDTYPE)-$(TARGET_PRODUCT_SHORT)-$(BUILD_DATE)
-ROM_FINGERPRINT := YAAP/$(PLATFORM_VERSION)/$(TARGET_PRODUCT_SHORT)/$(shell date -u +%H%M)
+ALPHA_BUILDTYPE ?= Unofficial
+ALPHA_BUILD_VERSION := 3.0
+ALPHA_BUILD_VARIANT ?= microg
+ALPHA_VERSION := $(ALPHA_BUILD_VERSION)-$(ALPHA_VARIANT)-$(TARGET_PRODUCT_SHORT)-$(BUILD_DATE)
+ALPHA_DISPLAY_VERSION := AlphaDroid-$(ALPHA_BUILD_VERSION)-$(ALPHA_BUILD_VARIANT)
+ALPHA_MAINTAINER ?= buildbot
+
+ROM_FINGERPRINT := ALPHA/$(PLATFORM_VERSION)/$(TARGET_PRODUCT_SHORT)/$(shell date -u +%H%M)
 
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
-  ro.yaap.build.version=$(YAAP_BUILD_VERSION) \
+  ro.yaap.build.version=$(ALPHA_BUILD_VERSION) \
   ro.yaap.build.date=$(BUILD_DATE) \
-  ro.yaap.buildtype=$(YAAP_BUILDTYPE) \
+  ro.yaap.buildtype=$(ALPHA_BUILDTYPE) \
   ro.yaap.fingerprint=$(ROM_FINGERPRINT) \
-  ro.yaap.version=$(YAAP_VERSION) \
-  ro.yaap.device=$(YAAP_BUILD) \
-  ro.modversion=$(YAAP_VERSION)
+  ro.yaap.version=$(ALPHA_VERSION) \
+  ro.yaap.device=$(ALPHA_BUILD) \
+  ro.modversion=$(ALPHA_VERSION) \
+	ro.alpha.build.version=$(ALPHA_BUILD_VERSION) \
+	ro.alpha.build.variant=$(ALPHA_BUILD_VARIANT) \
+	ro.alpha.maintainer=$(ALPHA_MAINTAINER) \
+	ro.alpha.build.date=$(BUILD_DATE) \
+	ro.alpha.buildtype=$(ALPHA_BUILDTYPE) \
+	ro.alpha.fingerprint=$(ROM_FINGERPRINT) \
+	ro.alpha.version=$(ALPHA_VERSION) \
+	ro.alpha.device=$(ALPHA_BUILD) \
+	ro.alpha.version=$(ALPHA_VERSION)
 
 # Signing
 ifneq (eng,$(TARGET_BUILD_VARIANT))
-ifneq (,$(wildcard vendor/yaap/signing/keys/releasekey.pk8))
-PRODUCT_DEFAULT_DEV_CERTIFICATE := vendor/yaap/signing/keys/releasekey
+ifneq (,$(wildcard vendor/alpha/signing/keys/releasekey.pk8))
+PRODUCT_DEFAULT_DEV_CERTIFICATE := vendor/alpha/signing/keys/releasekey
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.oem_unlock_supported=1
 endif
-ifneq (,$(wildcard vendor/yaap/signing/keys/otakey.x509.pem))
-PRODUCT_OTA_PUBLIC_KEYS := vendor/yaap/signing/keys/otakey.x509.pem
+ifneq (,$(wildcard vendor/alpha/signing/keys/otakey.x509.pem))
+PRODUCT_OTA_PUBLIC_KEYS := vendor/alpha/signing/keys/otakey.x509.pem
 endif
 endif
