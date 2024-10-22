@@ -113,6 +113,13 @@ PRODUCT_COPY_FILES += \
     vendor/alpha/overlay/partition_order.xml:$(TARGET_COPY_OUT_PRODUCT)/overlay/partition_order.xml \
     vendor/alpha/overlay/config-system_ext.xml:$(TARGET_COPY_OUT_SYSTEM_EXT)/overlay/config/config.xml
 
+# LineageOS
+PRODUCT_COPY_FILES += \
+    vendor/alpha/config/permissions/org.lineageos.android.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/permissions/org.lineageos.android.xml
+ifneq ($(TARGET_DISABLE_LINEAGE_SDK), true)
+# Lineage SDK
+include vendor/alpha/config/lineage_sdk_common.mk
+endif
 # Disable vendor restrictions
 PRODUCT_RESTRICT_VENDOR_FILES := false
 
