@@ -22,14 +22,13 @@
 #                                          to kernel/$(TARGET_DEVICE_DIR)
 #   TARGET_KERNEL_ARCH                 = Kernel Arch
 #   TARGET_KERNEL_CROSS_COMPILE_PREFIX = Compiler prefix (e.g. arm-eabi-)
-#                                          defaults to arm-linux-gnueabi- for arm
-#                                                      aarch64-linux-gnu- for arm64
-#                                                      x86_64-linux-gnu- for x86
+#                                          defaults to arm-linux-androidkernel- for arm
+#                                                      aarch64-linux-android- for arm64
+#                                                      x86_64-linux-android- for x86
 #
 #   TARGET_KERNEL_CLANG_COMPILE        = Compile kernel with clang, defaults to true
 #   TARGET_KERNEL_CLANG_VERSION        = Clang prebuilts version, optional, defaults to clang-stable
 #   TARGET_KERNEL_CLANG_PATH           = Clang prebuilts path, optional
-#   TARGET_KERNEL_NEW_GCC_COMPILE      = Compile kernel with newer version GCC, defaults to false
 #
 #   TARGET_KERNEL_LLVM_BINUTILS        = Use LLVM binutils, defaults to true
 #   TARGET_KERNEL_RUST_VERSION         = Rust prebuilts version, optional
@@ -71,9 +70,9 @@ else
     KERNEL_ARCH := $(TARGET_KERNEL_ARCH)
 endif
 
-KERNEL_VERSION := $(shell grep -s '^VERSION = ' $(TARGET_KERNEL_SOURCE)/Makefile | awk '{ print $$3 }')
-KERNEL_PATCHLEVEL := $(shell grep -s '^PATCHLEVEL = ' $(TARGET_KERNEL_SOURCE)/Makefile | awk '{ print $$3 }')
-TARGET_KERNEL_VERSION ?= $(shell echo $(KERNEL_VERSION)'.'$(KERNEL_PATCHLEVEL))
+KERNEL_VERSION := $(shell grep -s "^VERSION = " $(TARGET_KERNEL_SOURCE)/Makefile | awk '{ print $$3 }')
+KERNEL_PATCHLEVEL := $(shell grep -s "^PATCHLEVEL = " $(TARGET_KERNEL_SOURCE)/Makefile | awk '{ print $$3 }')
+TARGET_KERNEL_VERSION ?= $(shell echo $(KERNEL_VERSION)"."$(KERNEL_PATCHLEVEL))
 
 # 5.10+ can fully compile without GCC by default
 ifneq ($(KERNEL_VERSION),)
@@ -117,66 +116,60 @@ TOOLS_PATH_OVERRIDE := \
     PERL5LIB=$(BUILD_TOP)/prebuilts/tools-lineage/common/perl-base
 
 ifneq ($(KERNEL_NO_GCC), true)
-    ifeq ($(TARGET_KERNEL_NEW_GCC_COMPILE),true)
-        ifeq ($(TARGET_KERNEL_CLANG_COMPILE),true)
-            $(error TARGET_KERNEL_NEW_GCC_COMPILE cannot be used with TARGET_KERNEL_CLANG_COMPILE!)
-        endif
-        GCC_PREBUILTS := $(BUILD_TOP)/prebuilts/gcc/$(HOST_PREBUILT_TAG)
-        # arm64 toolchain
-        KERNEL_TOOLCHAIN_arm64 := $(GCC_PREBUILTS)/aarch64/aarch64-elf/bin
-        KERNEL_TOOLCHAIN_PREFIX_arm64 := aarch64-elf-
-        # arm toolchain
-        KERNEL_TOOLCHAIN_arm := $(GCC_PREBUILTS)/arm/arm-eabi/bin
-        KERNEL_TOOLCHAIN_PREFIX_arm := arm-eabi-
-    else
-        # arm64 toolchain
-        KERNEL_TOOLCHAIN_PREFIX_arm64 := aarch64-linux-gnu-
-        # arm toolchain
-        KERNEL_TOOLCHAIN_PREFIX_arm := arm-linux-gnueabi-
-    endif
+    GCC_PREBUILTS := $(BUILD_TOP)/prebuilts/gcc/$(HOST_PREBUILT_TAG)
+    # arm64 toolchain
+    KERNEL_TOOLCHAIN_arm64 := $(GCC_PREBUILTS)/aarch64/aarch64-linux-android-4.9/bin
+    KERNEL_TOOLCHAIN_PREFIX_arm64 := aarch64-linux-android-
+    # arm toolchain
+    KERNEL_TOOLCHAIN_arm := $(GCC_PREBUILTS)/arm/arm-linux-androideabi-4.9/bin
+    KERNEL_TOOLCHAIN_PREFIX_arm := arm-linux-androidkernel-
     # x86 toolchain
-    KERNEL_TOOLCHAIN_PREFIX_x86 := x86_64-linux-gnu-
+    KERNEL_TOOLCHAIN_x86 := $(GCC_PREBUILTS)/x86/x86_64-linux-android-4.9/bin
+    KERNEL_TOOLCHAIN_PREFIX_x86 := x86_64-linux-android-
 
     TARGET_KERNEL_CROSS_COMPILE_PREFIX := $(strip $(TARGET_KERNEL_CROSS_COMPILE_PREFIX))
     ifneq ($(TARGET_KERNEL_CROSS_COMPILE_PREFIX),)
         KERNEL_TOOLCHAIN_PREFIX ?= $(TARGET_KERNEL_CROSS_COMPILE_PREFIX)
     else
+        KERNEL_TOOLCHAIN ?= $(KERNEL_TOOLCHAIN_$(KERNEL_ARCH))
         KERNEL_TOOLCHAIN_PREFIX ?= $(KERNEL_TOOLCHAIN_PREFIX_$(KERNEL_ARCH))
     endif
 
-    KERNEL_TOOLCHAIN_PATH := $(KERNEL_TOOLCHAIN_PREFIX)
-
-    # We need to add GCC toolchain to the path when new GCC is used
-    # for tools like `as`
-    ifeq ($(TARGET_KERNEL_NEW_GCC_COMPILE), true)
-        KERNEL_TOOLCHAIN_PATH_gcc := $(KERNEL_TOOLCHAIN_$(KERNEL_ARCH))
+    ifeq ($(KERNEL_TOOLCHAIN),)
+        KERNEL_TOOLCHAIN_PATH := $(KERNEL_TOOLCHAIN_PREFIX)
+    else
+        KERNEL_TOOLCHAIN_PATH := $(KERNEL_TOOLCHAIN)/$(KERNEL_TOOLCHAIN_PREFIX)
     endif
 
+    # We need to add GCC toolchain to the path no matter what
+    # for tools like `as`
+    KERNEL_TOOLCHAIN_PATH_gcc := $(KERNEL_TOOLCHAIN_$(KERNEL_ARCH))
+
     ifneq ($(TARGET_KERNEL_CLANG_COMPILE),false)
-        KERNEL_CROSS_COMPILE := CROSS_COMPILE='$(KERNEL_TOOLCHAIN_PATH)'
+        KERNEL_CROSS_COMPILE := CROSS_COMPILE="$(KERNEL_TOOLCHAIN_PATH)"
     else
-        KERNEL_CROSS_COMPILE := CROSS_COMPILE='$(CCACHE_BIN) $(KERNEL_TOOLCHAIN_PATH)'
+        KERNEL_CROSS_COMPILE := CROSS_COMPILE="$(CCACHE_BIN) $(KERNEL_TOOLCHAIN_PATH)"
     endif
 
     # Needed for CONFIG_COMPAT_VDSO, safe to set for all arm64 builds
     ifeq ($(KERNEL_ARCH),arm64)
-        KERNEL_CROSS_COMPILE += CROSS_COMPILE_ARM32='$(KERNEL_TOOLCHAIN_arm)/$(KERNEL_TOOLCHAIN_PREFIX_arm)'
-        KERNEL_CROSS_COMPILE += CROSS_COMPILE_COMPAT='$(KERNEL_TOOLCHAIN_arm)/$(KERNEL_TOOLCHAIN_PREFIX_arm)'
+        KERNEL_CROSS_COMPILE += CROSS_COMPILE_ARM32="$(KERNEL_TOOLCHAIN_arm)/$(KERNEL_TOOLCHAIN_PREFIX_arm)"
+        KERNEL_CROSS_COMPILE += CROSS_COMPILE_COMPAT="$(KERNEL_TOOLCHAIN_arm)/$(KERNEL_TOOLCHAIN_PREFIX_arm)"
     endif
 
     ifeq ($(TARGET_KERNEL_CLANG_COMPILE),false)
         ifeq ($(KERNEL_ARCH),arm)
-            # Avoid 'Unknown symbol _GLOBAL_OFFSET_TABLE_' errors
-            KERNEL_MAKE_FLAGS += CFLAGS_MODULE='-fno-pic'
+            # Avoid "Unknown symbol _GLOBAL_OFFSET_TABLE_" errors
+            KERNEL_MAKE_FLAGS += CFLAGS_MODULE="-fno-pic"
         endif
 
         ifeq ($(KERNEL_ARCH),arm64)
-            # Avoid 'unsupported RELA relocation: 311' errors (R_AARCH64_ADR_GOT_PAGE)
-            KERNEL_MAKE_FLAGS += CFLAGS_MODULE='-fno-pic'
+            # Avoid "unsupported RELA relocation: 311" errors (R_AARCH64_ADR_GOT_PAGE)
+            KERNEL_MAKE_FLAGS += CFLAGS_MODULE="-fno-pic"
         endif
     endif
 
-    KERNEL_MAKE_FLAGS += HOSTCFLAGS='-I/usr/include -I/usr/include/x86_64-linux-gnu' HOSTLDFLAGS='-L/usr/lib/x86_64-linux-gnu -L/usr/lib64 -fuse-ld=lld'
+    KERNEL_MAKE_FLAGS += CPATH="/usr/include:/usr/include/x86_64-linux-gnu" HOSTLDFLAGS="-L/usr/lib/x86_64-linux-gnu -L/usr/lib64 -fuse-ld=lld"
 
     ifeq ($(KERNEL_ARCH),arm64)
         # Add 32-bit GCC to PATH so that arm-linux-androidkernel-as is available for CONFIG_COMPAT_VDSO
@@ -195,8 +188,8 @@ ifneq ($(KERNEL_NO_GCC), true)
         endif
     endif
 else
-    KERNEL_MAKE_FLAGS += HOSTCFLAGS='--sysroot=$(BUILD_TOP)/prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.17-4.8/sysroot -I$(BUILD_TOP)/prebuilts/kernel-build-tools/linux-x86/include'
-    KERNEL_MAKE_FLAGS += HOSTLDFLAGS='--sysroot=$(BUILD_TOP)/prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.17-4.8/sysroot -Wl,-rpath,$(BUILD_TOP)/prebuilts/kernel-build-tools/linux-x86/lib64 -L $(BUILD_TOP)/prebuilts/kernel-build-tools/linux-x86/lib64 -fuse-ld=lld --rtlib=compiler-rt'
+    KERNEL_MAKE_FLAGS += HOSTCFLAGS="--sysroot=$(BUILD_TOP)/prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.17-4.8/sysroot -I$(BUILD_TOP)/prebuilts/kernel-build-tools/linux-x86/include"
+    KERNEL_MAKE_FLAGS += HOSTLDFLAGS="--sysroot=$(BUILD_TOP)/prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.17-4.8/sysroot -Wl,-rpath,$(BUILD_TOP)/prebuilts/kernel-build-tools/linux-x86/lib64 -L $(BUILD_TOP)/prebuilts/kernel-build-tools/linux-x86/lib64 -fuse-ld=lld --rtlib=compiler-rt"
 
     TOOLS_PATH_OVERRIDE += PATH=$(BUILD_TOP)/prebuilts/tools-lineage/$(HOST_PREBUILT_TAG)/bin:$(TARGET_KERNEL_CLANG_PATH)/bin:$(BUILD_TOP)/prebuilts/rust/$(HOST_PREBUILT_TAG)/$(TARGET_KERNEL_RUST_VERSION)/bin:$(BUILD_TOP)/prebuilts/clang-tools/$(HOST_PREBUILT_TAG)/bin:$$PATH
 endif
