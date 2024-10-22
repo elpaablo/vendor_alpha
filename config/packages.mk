@@ -72,8 +72,9 @@ ifneq ($(TARGET_BUILD_GAPPS),true)
 PRODUCT_PACKAGES += \
     Etar \
     LatinIME \
-    messaging \
-    SetupWizard
+    messaging
+#    SetupWizard
+
 endif
 
 # Include explicitly to work around GMS issues
