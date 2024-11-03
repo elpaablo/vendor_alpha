@@ -1,46 +1,49 @@
-PRODUCT_VERSION_MAJOR = 22
+PRODUCT_VERSION_MAJOR = 3
 PRODUCT_VERSION_MINOR = 1
 
-ifeq ($(LINEAGE_VERSION_APPEND_TIME_OF_DAY),true)
-    LINEAGE_BUILD_DATE := $(shell date -u +%Y%m%d_%H%M%S)
+ALPHA_VERSION_NAME := AlphaDroid
+ALPHA_VERSION_CODENAME := a$(PLATFORM_VERSION)
+ALPHA_BUILD_VERSION := 3.1
+ALPHA_BUILD_VARIANT := vanilla
+ALPHA_RELEASE_TYPE ?= unofficial
+ALPHA_MAINTAINER ?= buildbot
+
+ifeq ($(ALPHA_VERSION_APPEND_TIME_OF_DAY),true)
+    ALPHA_BUILD_DATE := $(shell date -u +%Y%m%d_%H%M%S)
 else
-    LINEAGE_BUILD_DATE := $(shell date -u +%Y%m%d)
+    ALPHA_BUILD_DATE := $(shell date -u +%Y%m%d)
 endif
 
-# Set LINEAGE_BUILDTYPE from the env RELEASE_TYPE, for jenkins compat
-
-ifndef LINEAGE_BUILDTYPE
-    ifdef RELEASE_TYPE
-        # Starting with "LINEAGE_" is optional
-        RELEASE_TYPE := $(shell echo $(RELEASE_TYPE) | sed -e 's|^LINEAGE_||g')
-        LINEAGE_BUILDTYPE := $(RELEASE_TYPE)
-    endif
+# Only include Updater for official builds
+ifeq ($(filter-out OFFICIAL Official official,$(ALPHA_BUILD_TYPE)),)
+  ALPHA_RELEASE_TYPE := $(ALPHA_BUILD_TYPE)
+  -include vendor/alpha-priv/keys/keys.mk
 endif
 
-# Filter out random types, so it'll reset to UNOFFICIAL
-ifeq ($(filter RELEASE NIGHTLY SNAPSHOT EXPERIMENTAL,$(LINEAGE_BUILDTYPE)),)
-    LINEAGE_BUILDTYPE := UNOFFICIAL
-    LINEAGE_EXTRAVERSION :=
+# TARGET_BUILD_PACKAGE options:
+# 1 - vanilla (default)
+# 2 - microg
+# 3 - gapps
+ifeq ($(TARGET_BUILD_PACKAGE),3)
+  ALPHA_BUILD_VARIANT := gapps
+  $(call inherit-product, vendor/gms/products/gms.mk)
+else
+  ifeq ($(TARGET_BUILD_PACKAGE),2)
+    ALPHA_BUILD_VARIANT := microg
+    $(call inherit-product, vendor/microg/product.mk)
+  endif
 endif
-
-ifeq ($(LINEAGE_BUILDTYPE), UNOFFICIAL)
-    ifneq ($(TARGET_UNOFFICIAL_BUILD_ID),)
-        LINEAGE_EXTRAVERSION := -$(TARGET_UNOFFICIAL_BUILD_ID)
-    endif
-endif
-
-LINEAGE_VERSION_SUFFIX := $(LINEAGE_BUILD_DATE)-$(LINEAGE_BUILDTYPE)$(LINEAGE_EXTRAVERSION)-$(LINEAGE_BUILD)
 
 # Internal version
-LINEAGE_VERSION := $(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MINOR)-$(LINEAGE_VERSION_SUFFIX)
+ALPHA_VERSION := $(ALPHA_VERSION_NAME)-v$(ALPHA_BUILD_VERSION)-$(ALPHA_BUILD_VARIANT)-$(ALPHA_BUILD_DATE)
 
 # Display version
-LINEAGE_DISPLAY_VERSION := $(PRODUCT_VERSION_MAJOR)-$(LINEAGE_VERSION_SUFFIX)
+ALPHA_DISPLAY_VERSION := $(ALPHA_VERSION_NAME)-$(ALPHA_BUILD_VERSION)-$(ALPHA_BUILD_VARIANT)
 
-# LineageOS version properties
 PRODUCT_SYSTEM_PROPERTIES += \
-    ro.lineage.version=$(LINEAGE_VERSION) \
-    ro.lineage.display.version=$(LINEAGE_DISPLAY_VERSION) \
-    ro.lineage.build.version=$(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MINOR) \
-    ro.lineage.releasetype=$(LINEAGE_BUILDTYPE) \
-    ro.modversion=$(LINEAGE_VERSION)
+    ro.alpha.version=$(ALPHA_VERSION) \
+    ro.alpha.release.type=$(ALPHA_RELEASE_TYPE) \
+    ro.alpha.build.version=$(ALPHA_BUILD_VERSION) \
+    ro.alpha.maintainer=$(ALPHA_MAINTAINER) \
+    ro.alpha.build.variant=$(ALPHA_BUILD_VARIANT) \
+    ro.lineage.build.version=$(ALPHA_BUILD_VERSION)

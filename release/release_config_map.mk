@@ -1,4 +1,5 @@
 #
+# Copyright (C) 2024 TheParasiteProject
 # Copyright (C) 2024 The LineageOS Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,10 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+TARGET_RELEASE ?= ap4a
+
 # Get the directory for this file, and use that instead of a fixed path.
 local_dir := $(dir $(lastword $(MAKEFILE_LIST)))
 
 # Attach the flag value definitions to the various release configurations.
-$(call declare-release-config, ap4a, $(local_dir)build_config/ap4a.scl)
+$(call declare-release-config, $(TARGET_RELEASE), $(local_dir)build_config/$(TARGET_RELEASE).scl)
 
 local_dir :=

@@ -1,5 +1,5 @@
 # Copyright (C) 2017 Unlegacy-Android
-# Copyright (C) 2017,2020 The LineageOS Project
+# Copyright (C) 2017,2024 The LineageOS Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,16 +14,25 @@
 # limitations under the License.
 
 # -----------------------------------------------------------------
-# Lineage OTA update package
+# AlphaDroid OTA update package
 
-LINEAGE_TARGET_PACKAGE := $(PRODUCT_OUT)/lineage-$(LINEAGE_VERSION).zip
+ALPHA_TARGET_PACKAGE := $(PRODUCT_OUT)/$(ALPHA_VERSION).zip
 
 SHA256 := prebuilts/build-tools/path/$(HOST_PREBUILT_TAG)/sha256sum
 
-$(LINEAGE_TARGET_PACKAGE): $(INTERNAL_OTA_PACKAGE_TARGET)
-	$(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(LINEAGE_TARGET_PACKAGE)
-	$(hide) $(SHA256) $(LINEAGE_TARGET_PACKAGE) | sed "s|$(PRODUCT_OUT)/||" > $(LINEAGE_TARGET_PACKAGE).sha256sum
-	@echo "Package Complete: $(LINEAGE_TARGET_PACKAGE)" >&2
+$(ALPHA_TARGET_PACKAGE): $(INTERNAL_OTA_PACKAGE_TARGET)
+	$(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(ALPHA_TARGET_PACKAGE)
+	$(hide) $(SHA256) $(ALPHA_TARGET_PACKAGE) | sed "s|$(PRODUCT_OUT)/||" > $(ALPHA_TARGET_PACKAGE).sha256sum
+	@echo '' >&2
+	@echo '_______ ______         ______          ________                _____ _________ ' >&2
+	@echo '___    |___  /________ ___  /_ ______ ____  __ \______________ ___(_)______  / ' >&2
+	@echo '__  /| |__  / ___  __ \__  __ \_  __ `/__  / / /__  ___/_  __ \__  / _  __  /  ' >&2
+	@echo '_  ___ |_  /  __  /_/ /_  / / // /_/ / _  /_/ / _  /    / /_/ /_  /  / /_/ /   ' >&2
+	@echo '/_/  |_|/_/   _  .___/ /_/ /_/ \__,_/  /_____/  /_/     \____/ /_/   \__,_/    ' >&2
+	@echo '              /_/                                                              ' >&2
+	@echo '' >&2
+	@echo '' >&2
+	@echo "Package Complete: $(ALPHA_TARGET_PACKAGE)" >&2
 
 .PHONY: bacon
-bacon: $(LINEAGE_TARGET_PACKAGE) $(DEFAULT_GOAL)
+bacon: $(ALPHA_TARGET_PACKAGE) $(DEFAULT_GOAL)

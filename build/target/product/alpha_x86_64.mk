@@ -1,5 +1,4 @@
-#
-# Copyright (C) 2018-2024 The LineageOS Project
+# Copyright (C) 2018-2020 The LineageOS Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,16 +11,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/alpha_arm.mk \
-    $(LOCAL_DIR)/alpha_arm64.mk \
-    $(LOCAL_DIR)/alpha_x86.mk \
-    $(LOCAL_DIR)/alpha_x86_64.mk
+$(call inherit-product, build/target/product/aosp_x86_64.mk)
 
-COMMON_LUNCH_CHOICES := \
-    alpha_arm-userdebug \
-    alpha_arm64-userdebug \
-    alpha_x86-userdebug \
-    alpha_x86_64-userdebug
+include vendor/alpha/build/target/product/alpha_generic_target.mk
+
+PRODUCT_NAME := alpha_x86_64
+
+PRODUCT_SDK_ADDON_NAME := alpha
+PRODUCT_SDK_ADDON_SYS_IMG_SOURCE_PROP := $(LOCAL_PATH)/source.properties
