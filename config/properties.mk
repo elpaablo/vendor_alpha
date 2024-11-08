@@ -98,10 +98,12 @@ PRODUCT_PRODUCT_PROPERTIES += \
     ro.launcher.blur.appLaunch=0
 
 # Audio defaults
-PRODUCT_PRODUCT_PROPERTIES += \
+ifneq ($(TARGET_BUILD_PACKAGE),3)
+  PRODUCT_PRODUCT_PROPERTIES += \
     ro.config.notification_sound=Argon.ogg \
     ro.config.alarm_alert=Hassium.ogg \
     ro.config.ringtone=Orion.ogg
+endif
 
 # DeviceAsWebcam
 ifeq ($(TARGET_BUILD_DEVICE_AS_WEBCAM), true)
