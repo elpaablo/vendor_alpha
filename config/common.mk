@@ -1,6 +1,7 @@
 # Allow vendor/extra to override any property by setting it first
 $(call inherit-product-if-exists, vendor/extra/product.mk)
 $(call inherit-product-if-exists, vendor/addons/config.mk)
+$(call inherit-product, vendor/alpha/config/features.mk)
 $(call inherit-product, vendor/alpha/config/properties.mk)
 $(call inherit-product, vendor/alpha/config/packages.mk)
 $(call inherit-product, vendor/alpha/config/audio.mk)
@@ -33,26 +34,12 @@ SYSTEMUI_OPTIMIZE_JAVA ?= true
 # Disable vendor restrictions
 PRODUCT_RESTRICT_VENDOR_FILES := false
 
-# Backup Tool
-PRODUCT_COPY_FILES += \
-    vendor/alpha/prebuilt/common/bin/backuptool.sh:install/bin/backuptool.sh \
-    vendor/alpha/prebuilt/common/bin/backuptool.functions:install/bin/backuptool.functions \
-    vendor/alpha/prebuilt/common/bin/50-alpha.sh:$(TARGET_COPY_OUT_SYSTEM)/addon.d/50-alpha.sh
-
+# Text classifier
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
-    system/addon.d/50-alpha.sh
-
-ifneq ($(strip $(AB_OTA_PARTITIONS) $(AB_OTA_POSTINSTALL_CONFIG)),)
-  PRODUCT_COPY_FILES += \
-    vendor/alpha/prebuilt/common/bin/backuptool_ab.sh:$(TARGET_COPY_OUT_SYSTEM)/bin/backuptool_ab.sh \
-    vendor/alpha/prebuilt/common/bin/backuptool_ab.functions:$(TARGET_COPY_OUT_SYSTEM)/bin/backuptool_ab.functions \
-    vendor/alpha/prebuilt/common/bin/backuptool_postinstall.sh:$(TARGET_COPY_OUT_SYSTEM)/bin/backuptool_postinstall.sh
-
-  PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
-    system/bin/backuptool_ab.sh \
-    system/bin/backuptool_ab.functions \
-    system/bin/backuptool_postinstall.sh
-endif
+    system/etc/textclassifier/actions_suggestions.universal.model \
+    system/etc/textclassifier/lang_id.model \
+    system/etc/textclassifier/textclassifier.en.model \
+    system/etc/textclassifier/textclassifier.universal.model
 
 # Updater
 PRODUCT_COPY_FILES += \
@@ -95,24 +82,6 @@ ifeq ($(TARGET_ENABLE_EPPE),true)
   $(call enforce-product-packages-exist-internal,$(wildcard device/*/$(LINEAGE_BUILD)/$(TARGET_PRODUCT).mk),product_manifest.xml rild Calendar Launcher3 Launcher3Go Launcher3QuickStep Launcher3QuickStepGo android.hidl.memory@1.0-impl.vendor vndk_apex_snapshot_package)
 endif
 
-# TARGET_BUILD_PACKAGE options:
-# 1 - vanilla (default)
-# 2 - microg
-# 3 - gapps
-ifeq ($(TARGET_BUILD_PACKAGE),3)
-  BUILD_GMS_OVERLAYS_AND_PROPS := true
-  $(call inherit-product, vendor/gms/products/gms.mk)
-else
-  ifeq ($(TARGET_BUILD_PACKAGE),2)
-    $(call inherit-product, vendor/microg/product.mk)
-  endif
-endif
-
-ifneq ($(TARGET_FACE_UNLOCK_SUPPORTED),false)
-  PRODUCT_COPY_FILES += \
-    frameworks/native/data/etc/android.hardware.biometrics.face.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/permissions/android.hardware.biometrics.face.xml
-endif
-
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
     system/bin/curl \
     system/bin/getcap \
@@ -126,7 +95,7 @@ PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
     system/%/libntfs-3g.so
 
 ifneq ($(TARGET_BUILD_VARIANT),user)
-PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
+  PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
     system/bin/procmem
 endif
 

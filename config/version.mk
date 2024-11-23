@@ -26,11 +26,9 @@ endif
 # 3 - gapps
 ifeq ($(TARGET_BUILD_PACKAGE),3)
   ALPHA_BUILD_VARIANT := gapps
-  $(call inherit-product, vendor/gms/products/gms.mk)
 else
   ifeq ($(TARGET_BUILD_PACKAGE),2)
     ALPHA_BUILD_VARIANT := microg
-    $(call inherit-product, vendor/microg/product.mk)
   endif
 endif
 

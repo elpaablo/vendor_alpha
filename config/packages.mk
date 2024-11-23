@@ -21,13 +21,18 @@ PRODUCT_PACKAGES += \
     Updater
 
 ifneq ($(PRODUCT_NO_CAMERA),true)
-PRODUCT_PACKAGES += \
+  PRODUCT_PACKAGES += \
     Aperture
 endif
 
 ifneq ($(TARGET_EXCLUDES_AUDIOFX),true)
-PRODUCT_PACKAGES += \
+  PRODUCT_PACKAGES += \
     AudioFX
+endif
+
+ifeq ($(TARGET_INCLUDE_MATLOG),true)
+  PRODUCT_PACKAGES += \
+    MatLog
 endif
 
 # Extra packages
@@ -36,22 +41,6 @@ endif
     GameSpace \
     OmniJaws \
     OmniStyle
-
-ifneq ($(TARGET_FACE_UNLOCK_SUPPORTED),false)
-  PRODUCT_PACKAGES += \
-    FaceUnlock
-endif
-
-# DeviceAsWebcam
-ifeq ($(TARGET_BUILD_DEVICE_AS_WEBCAM), true)
-    PRODUCT_PACKAGES += \
-        DeviceAsWebcam
-endif
-
-ifeq ($(TARGET_INCLUDE_MATLOG),true)
-  PRODUCT_PACKAGES += \
-    MatLog
-endif
 
 # Bootanimation
 # PRODUCT_PACKAGES += \

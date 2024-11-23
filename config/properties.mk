@@ -25,21 +25,9 @@ else
   PRODUCT_SYSTEM_DEFAULT_PROPERTIES += persist.sys.strictmode.disable=true
 endif
 
-ifneq ($(strip $(AB_OTA_PARTITIONS) $(AB_OTA_POSTINSTALL_CONFIG)),)
-  PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
-    ro.ota.allow_downgrade=true
-endif
-
 # Enable support of one-handed mode
 PRODUCT_PRODUCT_PROPERTIES += \
     ro.support_one_handed_mode?=true
-
-# SetupWizard
-ifneq ($(TARGET_BUILD_PACKAGE),3)
-  PRODUCT_PRODUCT_PROPERTIES += \
-    setupwizard.theme=glif_v4 \
-    setupwizard.feature.day_night_mode_enabled=true
-endif
 
 # Additional props
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
@@ -49,21 +37,6 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     drm.service.enabled=true \
     persist.sys.dun.override=0 \
     persist.sys.disable_rescue=true
-
-ifneq ($(TARGET_BUILD_PACKAGE),3)
-  PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
-    ro.error.receiver.system.apps=com.google.android.gms \
-    ro.setupwizard.enterprise_mode=1 \
-    ro.atrace.core.services=com.google.android.gms,com.google.android.gms.ui,com.google.android.gms.persistent \
-    ro.setupwizard.rotation_locked=true \
-    ro.com.google.ime.theme_id=5 \
-    ro.opa.eligible_device=true \
-    ro.com.android.wifi-watchlist=GoogleGuest \
-    ro.setupwizard.network_required=false \
-    ro.setupwizard.gservices_delay=-1 \
-    ro.setupwizard.mode=OPTIONAL \
-    setupwizard.feature.predeferred_enabled=false
-endif
 
 # Disable touch video heatmap to reduce latency, motion jitter, and CPU usage
 # on supported devices with Deep Press input classifier HALs and models
@@ -97,21 +70,3 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
 PRODUCT_PRODUCT_PROPERTIES += \
     ro.launcher.blur.appLaunch=0
 
-# Audio defaults
-ifneq ($(TARGET_BUILD_PACKAGE),3)
-  PRODUCT_PRODUCT_PROPERTIES += \
-    ro.config.notification_sound=Argon.ogg \
-    ro.config.alarm_alert=Hassium.ogg \
-    ro.config.ringtone=Orion.ogg
-endif
-
-# DeviceAsWebcam
-ifeq ($(TARGET_BUILD_DEVICE_AS_WEBCAM), true)
-  PRODUCT_VENDOR_PROPERTIES += \
-    ro.usb.uvc.enabled=true
-endif
-
-ifneq ($(TARGET_FACE_UNLOCK_SUPPORTED),false)
-  PRODUCT_SYSTEM_EXT_PROPERTIES += \
-    ro.face.sense_service=true
-endif
