@@ -69,7 +69,9 @@ endif
 PRODUCT_PACKAGES += \
     DocumentsUIOverlay \
     NetworkStackOverlay \
-    NavigationBarMode2ButtonOverlay
+    NavigationBarMode2ButtonOverlay \
+    WallpaperPickerOverlayAndroid \
+    WallpaperPickerOverlaySettings
 
 # Build Manifest
 PRODUCT_PACKAGES += \
