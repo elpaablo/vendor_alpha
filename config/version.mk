@@ -5,7 +5,7 @@ ALPHA_VERSION_NAME := AlphaDroid
 ALPHA_VERSION_CODENAME := a$(PLATFORM_VERSION)
 ALPHA_BUILD_VERSION := 3.1
 ALPHA_BUILD_VARIANT := vanilla
-ALPHA_RELEASE_TYPE ?= unofficial
+ALPHA_RELEASE_TYPE := BETA
 ALPHA_MAINTAINER ?= buildbot
 
 ifeq ($(ALPHA_VERSION_APPEND_TIME_OF_DAY),true)
@@ -14,10 +14,10 @@ else
     ALPHA_BUILD_DATE := $(shell date -u +%Y%m%d)
 endif
 
-# Only include Updater for official builds
+# Only include alpha priv-keys on official builds
 ifeq ($(filter-out OFFICIAL Official official,$(ALPHA_BUILD_TYPE)),)
-  ALPHA_RELEASE_TYPE := $(ALPHA_BUILD_TYPE)
-  -include vendor/alpha-priv/keys/keys.mk
+#   ALPHA_RELEASE_TYPE := $(ALPHA_BUILD_TYPE)
+   -include vendor/alpha-priv/keys/keys.mk
 endif
 
 # TARGET_BUILD_PACKAGE options:
