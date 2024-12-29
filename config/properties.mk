@@ -78,3 +78,14 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
 PRODUCT_PRODUCT_PROPERTIES += \
     ro.launcher.blur.appLaunch=0
 
+# Pif
+PRODUCT_PRODUCT_PROPERTIES += \
+    persist.sys.pihooks_BRAND?=google \
+    persist.sys.pihooks_MANUFACTURER?=Google \
+    persist.sys.pihooks_DEVICE?=oriole \
+    persist.sys.pihooks_PRODUCT?=oriole_beta \
+    persist.sys.pihooks_DEVICE_INITIAL_SDK_INT?=32 \
+    persist.sys.pihooks_SECURITY_PATCH?=2024-12-05 \
+    persist.sys.pihooks_ID?=BP11.241121.010\
+    persist.sys.pihooks_FINGERPRINT?=google/oriole_beta/oriole:15/BP11.241121.010/12780007:user/release-keys \
+    persist.sys.pihooks_MODEL?=Pixel 6
