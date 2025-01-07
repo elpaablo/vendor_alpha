@@ -11,6 +11,7 @@ PRODUCT_PACKAGES += \
     LineageParts \
     LineageSettingsProvider \
     LineageSetupWizard \
+    OmniJaws \
     Profiles \
     QuickAccessWallet \
     Recorder \
@@ -39,7 +40,6 @@ endif
 # PRODUCT_PACKAGES += \
     BatteryStatsViewer \
     GameSpace \
-    OmniJaws \
     OmniStyle
 
 # Bootanimation
