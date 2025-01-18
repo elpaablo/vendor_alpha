@@ -15,10 +15,10 @@ else
 endif
 
 # Only include alpha priv-keys on official builds
-ifeq ($(filter-out OFFICIAL Official official,$(ALPHA_BUILD_TYPE)),)
+# ifeq ($(filter-out OFFICIAL Official official,$(ALPHA_BUILD_TYPE)),)
 #   ALPHA_RELEASE_TYPE := $(ALPHA_BUILD_TYPE)
-   -include vendor/alpha-priv/keys/keys.mk
-endif
+#   -include vendor/alpha-priv/keys/keys.mk
+# endif
 
 # TARGET_BUILD_PACKAGE options:
 # 1 - vanilla (default)
@@ -33,10 +33,10 @@ else
 endif
 
 # Internal version
-ALPHA_VERSION := $(ALPHA_VERSION_NAME)-v$(ALPHA_BUILD_VERSION)-$(ALPHA_BUILD_VARIANT)-$(ALPHA_BUILD_DATE)
+ALPHA_VERSION := $(ALPHA_BUILD_VERSION)-$(ALPHA_BUILD_DATE)-$(ALPHA_BUILD_VARIANT)-$(ALPHA_BUILD)
 
 # Display version
-ALPHA_DISPLAY_VERSION := $(ALPHA_VERSION_NAME)-$(ALPHA_BUILD_VERSION)-$(ALPHA_BUILD_VARIANT)
+ALPHA_DISPLAY_VERSION := $(ALPHA_VERSION_NAME)-$(ALPHA_BUILD_VERSION)-$(ALPHA_BUILD_VARIANT)-$(ALPHA_BUILD)
 
 PRODUCT_SYSTEM_PROPERTIES += \
     ro.alpha.version=$(ALPHA_VERSION) \

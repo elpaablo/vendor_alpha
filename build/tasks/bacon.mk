@@ -16,7 +16,7 @@
 # -----------------------------------------------------------------
 # AlphaDroid OTA update package
 
-ALPHA_TARGET_PACKAGE := $(PRODUCT_OUT)/$(ALPHA_VERSION).zip
+ALPHA_TARGET_PACKAGE := $(PRODUCT_OUT)/AlphaDroid-$(ALPHA_VERSION).zip
 
 SHA256 := prebuilts/build-tools/path/$(HOST_PREBUILT_TAG)/sha256sum
 
