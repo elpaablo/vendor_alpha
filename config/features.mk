@@ -7,6 +7,9 @@ PRODUCT_COPY_FILES += \
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
     system/addon.d/50-alpha.sh
 
+PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+    ro.ota.allow_downgrade=true
+
 ifneq ($(strip $(AB_OTA_PARTITIONS) $(AB_OTA_POSTINSTALL_CONFIG)),)
   PRODUCT_COPY_FILES += \
     vendor/alpha/prebuilt/common/bin/backuptool_ab.sh:$(TARGET_COPY_OUT_SYSTEM)/bin/backuptool_ab.sh \
@@ -17,9 +20,6 @@ ifneq ($(strip $(AB_OTA_PARTITIONS) $(AB_OTA_POSTINSTALL_CONFIG)),)
     system/bin/backuptool_ab.sh \
     system/bin/backuptool_ab.functions \
     system/bin/backuptool_postinstall.sh
-
-  PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
-    ro.ota.allow_downgrade=true
 endif
 
 # DeviceAsWebcam
