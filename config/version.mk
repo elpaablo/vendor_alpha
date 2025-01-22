@@ -15,10 +15,10 @@ else
 endif
 
 # Only include alpha priv-keys on official builds
-# ifeq ($(filter-out OFFICIAL Official official,$(ALPHA_BUILD_TYPE)),)
+ifeq ($(filter-out OFFICIAL Official official,$(ALPHA_BUILD_TYPE)),)
 #   ALPHA_RELEASE_TYPE := $(ALPHA_BUILD_TYPE)
-#   -include vendor/alpha-priv/keys/keys.mk
-# endif
+   -include vendor/alpha-priv/keys/keys.mk
+endif
 
 # TARGET_BUILD_PACKAGE options:
 # 1 - vanilla (default)
