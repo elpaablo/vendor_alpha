@@ -43,8 +43,8 @@ endif
     OmniStyle
 
 # Bootanimation
-# PRODUCT_PACKAGES += \
-#    bootanimation.zip
+PRODUCT_PACKAGES += \
+    bootanimation.zip
 
 # Overlays
 PRODUCT_PACKAGES += \
