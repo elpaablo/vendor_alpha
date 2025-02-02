@@ -2,24 +2,27 @@
 # Apps
 PRODUCT_PACKAGES += \
     Backgrounds \
+    BatteryStatsViewer \
     Eleven \
     Etar \
     ExactCalculator \
+    GameSpace \
     Glimpse \
     Jelly \
     LatinIME \
+    Launcher3QuickStep \
     LineageParts \
     LineageSettingsProvider \
     LineageSetupWizard \
     OmniJaws \
+    OmniStyle \
     Profiles \
     QuickAccessWallet \
     Recorder \
     Seedvault \
     ThemePicker \
     ThemesStub \
-    Launcher3QuickStep \
-    Updater
+    Updater \
 
 ifneq ($(PRODUCT_NO_CAMERA),true)
   PRODUCT_PACKAGES += \
@@ -35,12 +38,6 @@ ifeq ($(TARGET_INCLUDE_MATLOG),true)
   PRODUCT_PACKAGES += \
     MatLog
 endif
-
-# Extra packages
-# PRODUCT_PACKAGES += \
-    BatteryStatsViewer \
-    GameSpace \
-    OmniStyle
 
 # Bootanimation
 PRODUCT_PACKAGES += \
