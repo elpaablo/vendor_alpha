@@ -17,27 +17,42 @@
 #
 
 #$1=TARGET_DEVICE, $2=PRODUCT_OUT, $3=FILE_NAME
-existingOTAjson=./vendor/OTA/$1.json
-output=$2/$1.json
+DEVICE=$1
+OUT=$2
+FILENAME=$3
+
+existingOTAjson=./vendor/OTA/$DEVICE.json
+output=$OUT/$DEVICE.json
+buildprop="$OUT/system/build.prop"
 
 # Cleanup old file
 if [ -f $output ]; then
     rm $output
 fi
 
-echo "Generating JSON file data for OTA support..."
-
 # Helper function to extract field from JSON
 extract_field() {
-    grep "\"$1\":" "$existingOTAjson" | sed -n "s/.*\"$1\": *\"\([^\"]*\)\".*/\1/p" | xargs
+    grep -m 1 "\"$1\":" "$existingOTAjson" | sed -n "s/.*\"$1\": *\"\([^\"]*\)\".*/\1/p" | xargs
 }
+
+# Helper function to extract prop from prop file
+extract_prop() {
+    grep -m 1 "$1" "$buildprop" | cut -d'=' -f2
+}
+
+# Generate JSON fields
+VERSION=$(extract_prop "ro.alpha.build.version")
+BUILDTYPE=$(extract_prop "ro.alpha.release.type")
+BUILDVARIANT=$(extract_prop "ro.alpha.build.variant")
+MAINTAINER=$(extract_prop "ro.alpha.maintainer")
+TIMESTAMP=$(extract_prop "ro.system.build.date.utc")
+MD5=$(md5sum "$OUT/$FILENAME" | cut -d' ' -f1)
+SHA256=$(sha256sum "$OUT/$FILENAME" | cut -d' ' -f1)
+SIZE=$(stat -c "%s" "$OUT/$FILENAME")
 
 if [ -f $existingOTAjson ]; then
     # Extract fields from existing JSON or leave empty
-    MAINTAINER=$(extract_field "maintainer")
     OEM=$(extract_field "oem")
-    DEVICE=$(extract_field "device")
-    BUILDTYPE=$(extract_field "buildtype")
     FORUM=$(extract_field "forum")
     GAPPS=$(extract_field "gapps")
     FIRMWARE=$(extract_field "firmware")
@@ -51,16 +66,6 @@ if [ -f $existingOTAjson ]; then
     KERNEL=$(extract_field "kernel")
 fi
 
-# Generate JSON fields
-FILENAME=$3
-VERSION=$(awk '{ sub(/v/, ""); sub(/\.zip/, ""); print }' <<< `echo "$3" | cut -d'-' -f6`)
-
-BUILDPROP="$2/system/build.prop"
-TIMESTAMP=$(grep "ro.system.build.date.utc" "$BUILDPROP" | cut -d'=' -f2)
-MD5=$(md5sum "$2/$3" | cut -d' ' -f1)
-SHA256=$(sha256sum "$2/$3" | cut -d' ' -f1)
-SIZE=$(stat -c "%s" "$2/$3")
-
 # Generate JSON output
 cat <<EOF >$output
 {
@@ -68,15 +73,16 @@ cat <<EOF >$output
         {
             "maintainer": "${MAINTAINER:-}",
             "oem": "${OEM:-}",
-            "device": "${DEVICE:-}",
-            "filename": "$3",
-            "download": "https://sourceforge.net/projects/alphadroid-project/files/$1/$3/download",
+            "device": "$DEVICE",
+            "filename": "$FILENAME",
+            "download": "https://sourceforge.net/projects/alphadroid-project/files/$DEVICE/$FILENAME/download",
             "timestamp": $TIMESTAMP,
             "md5": "$MD5",
             "sha256": "$SHA256",
             "size": $SIZE,
             "version": "$VERSION",
-            "buildtype": "${BUILDTYPE:-}",
+            "buildtype": "$BUILDTYPE",
+            "buildvariant": "$BUILDVARIANT",
             "forum": "${FORUM:-}",
             "gapps": "${GAPPS:-}",
             "firmware": "${FIRMWARE:-}",
@@ -94,8 +100,12 @@ cat <<EOF >$output
 EOF
 
 if [ ! -f $existingOTAjson ]; then
-	  echo 'There is no official support for this device yet'
-	  echo 'Consider adding official support by reading the documentation at https://github.com/alphadroid-devices/OTA/blob/alpha-15.1/README.md'
+    echo 'There is no official support for this device yet'
+    echo 'Consider adding official support by reading the documentation at https://github.com/alphadroid-devices/OTA/blob/alpha-15.1/README.md'
+else
+    echo ""
+    cat $output
+    echo ""
 fi
 
 echo "JSON file generation completed"
