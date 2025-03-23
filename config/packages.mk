@@ -41,6 +41,12 @@ ifeq ($(TARGET_INCLUDE_MATLOG),true)
     MatLog
 endif
 
+# ColumbusService
+ifeq ($(TARGET_SUPPORTS_QUICK_TAP),true)
+  PRODUCT_PACKAGES += \
+    ColumbusService
+endif
+
 # Bootanimation
 PRODUCT_PACKAGES += \
     bootanimation.zip
