@@ -68,8 +68,6 @@ SOONG_CONFIG_alphaNvidiaVars += \
     uses_nvidia_enhancements
 
 SOONG_CONFIG_NAMESPACES += alphaQcomVars
-SOONG_CONFIG_alphaQcomVars += \
-    uses_pre_uplink_features_netmgrd
 
 # Only create display_headers_namespace var if dealing with UM platforms to avoid breaking build for all other platforms
 ifneq ($(filter $(UM_PLATFORMS),$(TARGET_BOARD_PLATFORM)),)
@@ -86,7 +84,6 @@ SOONG_CONFIG_alphaGlobalVars_gralloc_handle_has_reserved_size := $(TARGET_GRALLO
 SOONG_CONFIG_alphaGlobalVars_gralloc_handle_has_ubwcp_format := $(TARGET_GRALLOC_HANDLE_HAS_UBWCP_FORMAT)
 SOONG_CONFIG_alphaGlobalVars_uses_egl_display_array := $(TARGET_USES_EGL_DISPLAY_ARRAY)
 SOONG_CONFIG_alphaNvidiaVars_uses_nvidia_enhancements := $(NV_ANDROID_FRAMEWORK_ENHANCEMENTS)
-SOONG_CONFIG_alphaQcomVars_uses_pre_uplink_features_netmgrd := $(TARGET_USES_PRE_UPLINK_FEATURES_NETMGRD)
 SOONG_CONFIG_alphaGlobalVars_uses_oplus_touch := $(TARGET_USES_OPLUS_TOUCH)
 
 # Set default values
