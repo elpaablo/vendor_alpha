@@ -59,6 +59,11 @@ PRODUCT_PACKAGES += \
     WallpaperPickerOverlayAndroid \
     WallpaperPickerOverlaySettings
 
+
+# Component overrides
+PRODUCT_PACKAGES += \
+    alpha-component-overrides.xml
+
 # Build Manifest
 PRODUCT_PACKAGES += \
     build-manifest
