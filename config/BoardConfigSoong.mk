@@ -35,7 +35,6 @@ SOONG_CONFIG_alphaGlobalVars += \
     camera_needs_client_info_lib_oplus \
     camera_override_format_from_reserved \
     target_camera_package_name \
-    target_init_vendor_lib \
     target_libcameraservice_ext_lib \
     uses_oplus_touch
 
@@ -50,14 +49,12 @@ BOOTLOADER_MESSAGE_OFFSET ?= 0
 TARGET_ADDITIONAL_GRALLOC_10_USAGE_BITS ?= 0
 TARGET_CAMERA_OVERRIDE_FORMAT_FROM_RESERVED ?= false
 TARGET_CAMERA_SERVICE_EXT_LIB ?= libcameraservice_ext_lib
-TARGET_INIT_VENDOR_LIB ?= vendor_init
 
 # Soong value variables
 SOONG_CONFIG_alphaGlobalVars_aapt_version_code := $(shell date -u +%Y%m%d)
 SOONG_CONFIG_alphaGlobalVars_additional_gralloc_10_usage_bits := $(TARGET_ADDITIONAL_GRALLOC_10_USAGE_BITS)
 SOONG_CONFIG_alphaGlobalVars_bootloader_message_offset := $(BOOTLOADER_MESSAGE_OFFSET)
 SOONG_CONFIG_alphaGlobalVars_target_camera_package_name := $(TARGET_CAMERA_PACKAGE_NAME)
-SOONG_CONFIG_alphaGlobalVars_target_init_vendor_lib := $(TARGET_INIT_VENDOR_LIB)
 SOONG_CONFIG_alphaGlobalVars_target_libcameraservice_ext_lib := $(TARGET_CAMERA_SERVICE_EXT_LIB)
 # Surfaceflinger
 ifneq ($(TARGET_SURFACEFLINGER_UDFPS_LIB),)
@@ -111,4 +108,9 @@ endif
 # Surfaceflinger
 ifneq ($(TARGET_SURFACEFLINGER_UDFPS_LIB),)
     $(call soong_config_set,surfaceflinger,udfps_lib,$(TARGET_SURFACEFLINGER_UDFPS_LIB))
+endif
+
+# Vendor init
+ifneq ($(TARGET_INIT_VENDOR_LIB),)
+    $(call soong_config_set,libinit,vendor_init_lib,$(TARGET_INIT_VENDOR_LIB))
 endif
