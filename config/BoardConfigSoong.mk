@@ -38,9 +38,6 @@ SOONG_CONFIG_alphaGlobalVars += \
     target_init_vendor_lib \
     target_libcameraservice_ext_lib \
     target_power_libperfmgr_mode_extension_lib \
-    target_powershare_path \
-    target_powershare_enabled \
-    target_powershare_disabled \
     uses_oplus_touch
 
 # Soong bool variables
@@ -56,8 +53,6 @@ TARGET_CAMERA_OVERRIDE_FORMAT_FROM_RESERVED ?= false
 TARGET_CAMERA_SERVICE_EXT_LIB ?= libcameraservice_ext_lib
 TARGET_INIT_VENDOR_LIB ?= vendor_init
 TARGET_POWER_LIBPERFMGR_MODE_EXTENSION_LIB ?= libperfmgr-ext
-TARGET_POWERSHARE_ENABLED ?= 1
-TARGET_POWERSHARE_DISABLED ?= 0
 
 # Soong value variables
 SOONG_CONFIG_alphaGlobalVars_aapt_version_code := $(shell date -u +%Y%m%d)
@@ -67,9 +62,6 @@ SOONG_CONFIG_alphaGlobalVars_target_camera_package_name := $(TARGET_CAMERA_PACKA
 SOONG_CONFIG_alphaGlobalVars_target_init_vendor_lib := $(TARGET_INIT_VENDOR_LIB)
 SOONG_CONFIG_alphaGlobalVars_target_libcameraservice_ext_lib := $(TARGET_CAMERA_SERVICE_EXT_LIB)
 SOONG_CONFIG_alphaGlobalVars_target_power_libperfmgr_mode_extension_lib := $(TARGET_POWER_LIBPERFMGR_MODE_EXTENSION_LIB)
-SOONG_CONFIG_alphaGlobalVars_target_powershare_path := $(TARGET_POWERSHARE_PATH)
-SOONG_CONFIG_alphaGlobalVars_target_powershare_enabled := $(TARGET_POWERSHARE_ENABLED)
-SOONG_CONFIG_alphaGlobalVars_target_powershare_disabled := $(TARGET_POWERSHARE_DISABLED)
 # Surfaceflinger
 ifneq ($(TARGET_SURFACEFLINGER_UDFPS_LIB),)
     $(warning TARGET_SURFACEFLINGER_UDFPS_LIB is deprecated, please migrate to soong_config_set,surfaceflinger,udfps_lib)
@@ -101,6 +93,17 @@ ifneq ($(TARGET_HEALTH_CHARGING_CONTROL_SUPPORTS_LIMIT),)
 endif
 ifneq ($(TARGET_HEALTH_CHARGING_CONTROL_SUPPORTS_TOGGLE),)
     $(call soong_config_set,lineage_health,charging_control_supports_toggle,$(TARGET_HEALTH_CHARGING_CONTROL_SUPPORTS_TOGGLE))
+endif
+
+# Lineage PowerShare HAL
+ifneq ($(TARGET_POWERSHARE_PATH),)
+    $(call soong_config_set,lineage_powershare,powershare_path,$(TARGET_POWERSHARE_PATH))
+endif
+ifneq ($(TARGET_POWERSHARE_ENABLED),)
+    $(call soong_config_set,lineage_powershare,powershare_enabled,$(TARGET_POWERSHARE_ENABLED))
+endif
+ifneq ($(TARGET_POWERSHARE_DISABLED),)
+    $(call soong_config_set,lineage_powershare,powershare_disabled,$(TARGET_POWERSHARE_DISABLED))
 endif
 
 # Surfaceflinger
