@@ -32,7 +32,6 @@ SOONG_CONFIG_alphaGlobalVars += \
     additional_gralloc_10_usage_bits \
     camera_needs_client_info_lib \
     camera_needs_client_info_lib_oplus \
-    camera_override_format_from_reserved \
     target_camera_package_name \
     target_libcameraservice_ext_lib \
     uses_oplus_touch
@@ -40,12 +39,10 @@ SOONG_CONFIG_alphaGlobalVars += \
 # Soong bool variables
 SOONG_CONFIG_alphaGlobalVars_camera_needs_client_info_lib := $(TARGET_CAMERA_NEEDS_CLIENT_INFO_LIB)
 SOONG_CONFIG_alphaGlobalVars_camera_needs_client_info_lib_oplus := $(TARGET_CAMERA_NEEDS_CLIENT_INFO_LIB_OPLUS)
-SOONG_CONFIG_alphaGlobalVars_camera_override_format_from_reserved := $(TARGET_CAMERA_OVERRIDE_FORMAT_FROM_RESERVED)
 SOONG_CONFIG_alphaGlobalVars_uses_oplus_touch := $(TARGET_USES_OPLUS_TOUCH)
 
 # Set default values
 TARGET_ADDITIONAL_GRALLOC_10_USAGE_BITS ?= 0
-TARGET_CAMERA_OVERRIDE_FORMAT_FROM_RESERVED ?= false
 TARGET_CAMERA_SERVICE_EXT_LIB ?= libcameraservice_ext_lib
 
 # Soong value variables
@@ -58,6 +55,11 @@ ifneq ($(TARGET_SURFACEFLINGER_UDFPS_LIB),)
     $(warning TARGET_SURFACEFLINGER_UDFPS_LIB is deprecated, please migrate to soong_config_set,surfaceflinger,udfps_lib)
     $(call soong_config_set,surfaceflinger,udfps_lib,$(TARGET_SURFACEFLINGER_UDFPS_LIB))
 endif
+endif
+
+# Camera
+ifneq ($(TARGET_CAMERA_OVERRIDE_FORMAT_FROM_RESERVED),)
+    $(call soong_config_set,camera,override_format_from_reserved,$(TARGET_CAMERA_OVERRIDE_FORMAT_FROM_RESERVED))
 endif
 
 # Lineage Health HAL
