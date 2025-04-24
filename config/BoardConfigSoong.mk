@@ -105,3 +105,8 @@ ifneq ($(TARGET_SURFACEFLINGER_UDFPS_LIB),)
     $(call soong_config_set,surfaceflinger,udfps_lib,$(TARGET_SURFACEFLINGER_UDFPS_LIB))
 endif
 endif
+
+# Surfaceflinger
+ifneq ($(TARGET_SURFACEFLINGER_UDFPS_LIB),)
+    $(call soong_config_set,surfaceflinger,udfps_lib,$(TARGET_SURFACEFLINGER_UDFPS_LIB))
+endif
