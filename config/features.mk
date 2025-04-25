@@ -45,7 +45,6 @@ endif
 
 # GAPPS
 ifeq ($(TARGET_BUILD_PACKAGE),3)
-  BUILD_GMS_OVERLAYS_AND_PROPS := true
   $(call inherit-product, vendor/gms/products/gms.mk)
 else
   ifeq ($(TARGET_BUILD_PACKAGE),2)
