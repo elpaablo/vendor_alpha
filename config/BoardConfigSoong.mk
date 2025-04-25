@@ -51,9 +51,6 @@ SOONG_CONFIG_alphaGlobalVars += \
     target_powershare_path \
     target_powershare_enabled \
     target_powershare_disabled \
-    target_trust_usb_control_path \
-    target_trust_usb_control_enable \
-    target_trust_usb_control_disable \
     uses_oplus_touch
 
 ifneq ($(TARGET_HEALTH_CHARGING_CONTROL_CHARGING_PATH),)
@@ -88,9 +85,6 @@ TARGET_INIT_VENDOR_LIB ?= vendor_init
 TARGET_POWER_LIBPERFMGR_MODE_EXTENSION_LIB ?= libperfmgr-ext
 TARGET_POWERSHARE_ENABLED ?= 1
 TARGET_POWERSHARE_DISABLED ?= 0
-TARGET_TRUST_USB_CONTROL_PATH ?= /proc/sys/kernel/deny_new_usb
-TARGET_TRUST_USB_CONTROL_ENABLE ?= 1
-TARGET_TRUST_USB_CONTROL_DISABLE ?= 0
 
 # Soong value variables
 SOONG_CONFIG_alphaGlobalVars_aapt_version_code := $(shell date -u +%Y%m%d)
@@ -114,9 +108,6 @@ SOONG_CONFIG_alphaGlobalVars_target_power_libperfmgr_mode_extension_lib := $(TAR
 SOONG_CONFIG_alphaGlobalVars_target_powershare_path := $(TARGET_POWERSHARE_PATH)
 SOONG_CONFIG_alphaGlobalVars_target_powershare_enabled := $(TARGET_POWERSHARE_ENABLED)
 SOONG_CONFIG_alphaGlobalVars_target_powershare_disabled := $(TARGET_POWERSHARE_DISABLED)
-SOONG_CONFIG_alphaGlobalVars_target_trust_usb_control_path := $(TARGET_TRUST_USB_CONTROL_PATH)
-SOONG_CONFIG_alphaGlobalVars_target_trust_usb_control_enable := $(TARGET_TRUST_USB_CONTROL_ENABLE)
-SOONG_CONFIG_alphaGlobalVars_target_trust_usb_control_disable := $(TARGET_TRUST_USB_CONTROL_DISABLE)
 # Surfaceflinger
 ifneq ($(TARGET_SURFACEFLINGER_UDFPS_LIB),)
     $(warning TARGET_SURFACEFLINGER_UDFPS_LIB is deprecated, please migrate to soong_config_set,surfaceflinger,udfps_lib)
