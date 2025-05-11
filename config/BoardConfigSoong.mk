@@ -15,16 +15,8 @@ EXPORT_TO_SOONG := \
 # Documentation here:
 # https://github.com/alphadroid-project/build_soong/commit/8328367c44085b948c003116c0ed74a047237a69
 
-SOONG_CONFIG_NAMESPACES += alphaVarsPlugin
-
-SOONG_CONFIG_alphaVarsPlugin :=
-
-define addVar
-  SOONG_CONFIG_alphaVarsPlugin += $(1)
-  SOONG_CONFIG_alphaVarsPlugin_$(1) := $($1)
-endef
-
-$(foreach v,$(EXPORT_TO_SOONG),$(eval $(call addVar,$(v))))
+$(call add_soong_config_namespace,alphaVarsPlugin)
+$(foreach v,$(EXPORT_TO_SOONG),$(eval $(call add_soong_config_var,alphaVarsPlugin,$(v))))
 
 SOONG_CONFIG_NAMESPACES += alphaGlobalVars
 SOONG_CONFIG_alphaGlobalVars += \
