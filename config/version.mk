@@ -1,5 +1,4 @@
 ALPHA_BUILD_VERSION := 3.2
-ALPHA_BUILD_VARIANT := vanilla
 ALPHA_MAINTAINER ?= buildbot
 
 ifeq ($(ALPHA_VERSION_APPEND_TIME_OF_DAY),true)
@@ -8,10 +7,8 @@ else
     ALPHA_BUILD_DATE := $(shell date -u +%Y%m%d)
 endif
 
-# Only include alpha priv-keys on official builds
 ifeq ($(filter-out OFFICIAL Official official,$(ALPHA_BUILD_TYPE)),)
    ALPHA_RELEASE_TYPE := Official
-   -include vendor/alpha-priv/keys/keys.mk
 else
   ALPHA_RELEASE_TYPE := Unofficial
 endif
@@ -25,6 +22,8 @@ ifeq ($(TARGET_BUILD_PACKAGE),3)
 else
   ifeq ($(TARGET_BUILD_PACKAGE),2)
     ALPHA_BUILD_VARIANT := microg
+  else
+    ALPHA_BUILD_VARIANT := vanilla
   endif
 endif
 

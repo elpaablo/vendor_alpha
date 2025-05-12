@@ -147,4 +147,5 @@ PRODUCT_EXTRA_RECOVERY_KEYS += \
     vendor/alpha/build/target/product/security/lineage
 
 include vendor/alpha/config/version.mk
+-include vendor/alpha-priv/keys/keys.mk
 -include $(WORKSPACE)/build_env/image-auto-bits.mk
