@@ -21,18 +21,13 @@ $(foreach v,$(EXPORT_TO_SOONG),$(eval $(call add_soong_config_var,alphaVarsPlugi
 SOONG_CONFIG_NAMESPACES += alphaGlobalVars
 SOONG_CONFIG_alphaGlobalVars += \
     aapt_version_code \
-    target_libcameraservice_ext_lib \
     uses_oplus_touch
 
 # Soong bool variables
 SOONG_CONFIG_alphaGlobalVars_uses_oplus_touch := $(TARGET_USES_OPLUS_TOUCH)
 
-# Set default values
-TARGET_CAMERA_SERVICE_EXT_LIB ?= libcameraservice_ext_lib
-
 # Soong value variables
 SOONG_CONFIG_alphaGlobalVars_aapt_version_code := $(shell date -u +%Y%m%d)
-SOONG_CONFIG_alphaGlobalVars_target_libcameraservice_ext_lib := $(TARGET_CAMERA_SERVICE_EXT_LIB)
 # Surfaceflinger
 ifneq ($(TARGET_SURFACEFLINGER_UDFPS_LIB),)
     $(warning TARGET_SURFACEFLINGER_UDFPS_LIB is deprecated, please migrate to soong_config_set,surfaceflinger,udfps_lib)
@@ -56,6 +51,10 @@ endif
 
 ifneq ($(TARGET_CAMERA_NEEDS_CLIENT_INFO_LIB_OPLUS),)
     $(call soong_config_set,camera,needs_client_info_lib_oplus,$(TARGET_CAMERA_NEEDS_CLIENT_INFO_LIB_OPLUS))
+endif
+
+ifneq ($(TARGET_CAMERA_SERVICE_EXT_LIB),)
+    $(call soong_config_set,camera,libcameraservice_ext_lib,$(TARGET_CAMERA_SERVICE_EXT_LIB))
 endif
 
 # Libui
