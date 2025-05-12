@@ -18,13 +18,6 @@ EXPORT_TO_SOONG := \
 $(call add_soong_config_namespace,alphaVarsPlugin)
 $(foreach v,$(EXPORT_TO_SOONG),$(eval $(call add_soong_config_var,alphaVarsPlugin,$(v))))
 
-SOONG_CONFIG_NAMESPACES += alphaGlobalVars
-SOONG_CONFIG_alphaGlobalVars += \
-    uses_oplus_touch
-
-# Soong bool variables
-SOONG_CONFIG_alphaGlobalVars_uses_oplus_touch := $(TARGET_USES_OPLUS_TOUCH)
-
 # Surfaceflinger
 ifneq ($(TARGET_SURFACEFLINGER_UDFPS_LIB),)
     $(warning TARGET_SURFACEFLINGER_UDFPS_LIB is deprecated, please migrate to soong_config_set,surfaceflinger,udfps_lib)
