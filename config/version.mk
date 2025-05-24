@@ -1,3 +1,4 @@
+ALPHA_BUILD_BRANCH := alpha-15.2
 ALPHA_BUILD_VERSION := 3.2
 ALPHA_MAINTAINER ?= buildbot
 
@@ -38,6 +39,7 @@ ALPHA_DISPLAY_VERSION := AlphaDroid-$(ALPHA_BUILD_VERSION)-$(ALPHA_BUILD_VARIANT
 PRODUCT_SYSTEM_PROPERTIES += \
     ro.alpha.version=$(ALPHA_VERSION) \
     ro.alpha.release.type=$(ALPHA_RELEASE_TYPE) \
+    ro.alpha.build.branch=$(ALPHA_BUILD_BRANCH) \
     ro.alpha.build.version=$(ALPHA_BUILD_VERSION) \
     ro.alpha.build.variant=$(ALPHA_BUILD_VARIANT) \
     ro.alpha.device=$(ALPHA_DEVICE) \
