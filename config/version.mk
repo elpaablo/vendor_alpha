@@ -8,10 +8,14 @@ else
     ALPHA_BUILD_DATE := $(shell date -u +%Y%m%d)
 endif
 
-ifeq ($(filter-out OFFICIAL Official official,$(ALPHA_BUILD_TYPE)),)
-   ALPHA_RELEASE_TYPE := Official
-else
+ifeq ($(strip $(ALPHA_BUILD_TYPE)),)
   ALPHA_RELEASE_TYPE := Unofficial
+  else
+    ifeq ($(filter-out OFFICIAL Official official, $(strip $(ALPHA_BUILD_TYPE))),)
+      ALPHA_RELEASE_TYPE := Official
+    else
+      ALPHA_RELEASE_TYPE := Unofficial
+  endif
 endif
 
 # TARGET_BUILD_PACKAGE options:
