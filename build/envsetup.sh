@@ -691,6 +691,7 @@ function alpharebase() {
 }
 
 function mka() {
+    vendor/alpha/build/tools/move_previous_builds.sh $OUT
     m "$@"
 }
 
