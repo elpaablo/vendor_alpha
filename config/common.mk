@@ -6,7 +6,6 @@ $(call inherit-product, vendor/alpha/config/properties.mk)
 $(call inherit-product, vendor/alpha/config/packages.mk)
 $(call inherit-product, vendor/alpha/config/audio.mk)
 $(call inherit-product-if-exists, vendor/pixel-framework/config.mk)
-$(call inherit-product-if-exists, vendor/Certification/config.mk)
 
 ifeq ($(WITH_PIXEL_OVERLAYS),true)
 -include vendor/pixeloverlays/config.mk
