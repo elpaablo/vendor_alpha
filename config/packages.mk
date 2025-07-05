@@ -1,87 +1,17 @@
-
-# Apps
 PRODUCT_PACKAGES += \
-    Backgrounds \
-    BatteryStatsViewer \
-    Eleven \
-    Etar \
-    ExactCalculator \
-    GameSpace \
-    Glimpse \
-    Jelly \
-    LatinIME \
-    Launcher3QuickStep \
-    LineageParts \
-    LineageSettingsProvider \
-    LineageSetupWizard \
-    LMOFreeform \
-    LMOFreeformSidebar \
-    OmniJaws \
-    OmniStyle \
-    Profiles \
-    QuickAccessWallet \
-    Recorder \
-    Seedvault \
     ThemePicker \
-    ThemesStub \
-    Updater
 
-ifneq ($(PRODUCT_NO_CAMERA),true)
-  PRODUCT_PACKAGES += \
-    Aperture
-endif
-
-ifneq ($(TARGET_EXCLUDES_AUDIOFX),true)
-  PRODUCT_PACKAGES += \
-    AudioFX
-endif
-
-ifeq ($(TARGET_INCLUDE_MATLOG),true)
-  PRODUCT_PACKAGES += \
-    MatLog
-endif
-
-# ColumbusService
-ifeq ($(TARGET_SUPPORTS_QUICK_TAP),true)
-  PRODUCT_PACKAGES += \
-    ColumbusService
-endif
-
-# Bootanimation
+# Extra tools in AlphaDroid
 PRODUCT_PACKAGES += \
-    bootanimation.zip
-
-# Charger animation
-PRODUCT_PACKAGES += \
-    charger_res_images \
-    alpha_charger_animation \
-    alpha_charger_animation_vendor
-
-# Overlays
-PRODUCT_PACKAGES += \
-    DocumentsUIOverlay \
-    NetworkStackOverlay \
-    NavigationBarMode2ButtonOverlay \
-    WallpaperPickerOverlayAndroid \
-    WallpaperPickerOverlaySettings
-
-
-# Component overrides
-PRODUCT_PACKAGES += \
-    alpha-component-overrides.xml
-
-# Build Manifest
-PRODUCT_PACKAGES += \
-    build-manifest
-
-# Config
-PRODUCT_PACKAGES += \
-    SimpleDeviceConfig \
-    SimpleSettingsConfig
-
-# Root
-PRODUCT_PACKAGES += \
-    adb_root
+    bash \
+    curl \
+    getcap \
+    htop \
+    libsepol \
+    nano \
+    setcap \
+    strace \
+    vim
 
 # Openssh
 PRODUCT_PACKAGES += \
@@ -93,31 +23,104 @@ PRODUCT_PACKAGES += \
     ssh-keygen \
     start-ssh
 
-# rsync
-PRODUCT_PACKAGES += \
-    rsync
-
-# These packages are excluded from user builds
-PRODUCT_PACKAGES_DEBUG += \
-    procmem
-
 # Filesystems tools
 PRODUCT_PACKAGES += \
+    fsck.exfat \
     fsck.ntfs \
+    mke2fs \
+    mkfs.exfat \
     mkfs.ntfs \
     mount.ntfs
 
-# Extra tools
+# AlphaDroid packages
 PRODUCT_PACKAGES += \
-    bash \
-    curl \
-    getcap \
-    htop \
-    nano \
-    setcap \
-    vim
+    Aperture \
+    AvatarPicker \
+    Camelot \
+    ExactCalculator \
+    Glimpse \
+    MatLog \
+    TrichromeLibrary \
+    TrichromeWebView \
+    TrichromeChrome \
+    Twelve \
+    YASR \
+    Seedvault \
+    OmniJaws \
+    OpenDelta \
+    Ripple \
+    Panic
 
-# Extra cmdline tools
+# TextClassifier
 PRODUCT_PACKAGES += \
-    unrar \
-    zstd
+    libtextclassifier_annotator_en_model \
+    libtextclassifier_annotator_universal_model \
+    libtextclassifier_actions_suggestions_universal_model \
+    libtextclassifier_lang_id_model
+
+PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
+    system/etc/textclassifier/actions_suggestions.universal.model \
+    system/etc/textclassifier/lang_id.model \
+    system/etc/textclassifier/textclassifier.en.model \
+    system/etc/textclassifier/textclassifier.universal.model
+
+# TFLite service.
+PRODUCT_PACKAGES += libtensorflowlite_jni
+
+PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
+    system/lib/libtensorflowlite_jni.so \
+    system/lib64/libtensorflowlite_jni.so
+
+PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
+    system/bin/curl \
+    system/bin/getcap \
+    system/bin/setcap
+
+PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
+    system/bin/fsck.ntfs \
+    system/bin/mkfs.ntfs \
+    system/bin/mount.ntfs \
+    system/%/libfuse-lite.so \
+    system/%/libntfs-3g.so
+
+ifneq ($(TARGET_BUILD_GAPPS),true)
+PRODUCT_PACKAGES += \
+    ESpeakNG \
+    Etar \
+    LatinIME \
+    messaging \
+    SetupWizard \
+    Talkback
+endif
+
+# Include explicitly to work around GMS issues
+PRODUCT_PACKAGES += \
+    libprotobuf-cpp-full \
+    librsjni
+
+# Config
+PRODUCT_PACKAGES += \
+    SimpleDeviceConfig
+
+# Telephony - CLO
+PRODUCT_PACKAGES += \
+    extphonelib \
+    extphonelib-product \
+    extphonelib.xml \
+    extphonelib_product.xml \
+    ims-ext-common \
+    ims_ext_common.xml \
+    tcmiface \
+    telephony-ext \
+    qti-telephony-hidl-wrapper \
+    qti-telephony-hidl-wrapper-prd \
+    qti_telephony_hidl_wrapper.xml \
+    qti_telephony_hidl_wrapper_prd.xml \
+    qti-telephony-utils \
+    qti-telephony-utils-prd \
+    qti_telephony_utils.xml \
+    qti_telephony_utils_prd.xml
+
+PRODUCT_BOOT_JARS += \
+    tcmiface \
+    telephony-ext

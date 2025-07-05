@@ -1,50 +1,45 @@
-ALPHA_BUILD_BRANCH := alpha-15.2
-ALPHA_BUILD_VERSION := 3.2.1
-ALPHA_MAINTAINER ?= buildbot
+# Copyright (C) 2020 YAAP
+# Copyright (C) 2025 AlphaDroid
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
-ifeq ($(ALPHA_VERSION_APPEND_TIME_OF_DAY),true)
-    ALPHA_BUILD_DATE := $(shell date -u +%Y%m%d_%H%M%S)
-else
-    ALPHA_BUILD_DATE := $(shell date -u +%Y%m%d)
+# Versioning System
+BUILD_DATE := $(shell date +%Y%m%d)
+TARGET_PRODUCT_SHORT := $(subst alpha_,,$(ALPHA_BUILD))
+
+ALPHA_BUILDTYPE ?= HOMEMADE
+ALPHA_BUILD_VERSION := $(PLATFORM_VERSION)
+ALPHA_VERSION := $(ALPHA_BUILD_VERSION)-$(ALPHA_BUILDTYPE)-$(TARGET_PRODUCT_SHORT)-$(BUILD_DATE)
+ROM_FINGERPRINT := ALPHA/$(PLATFORM_VERSION)/$(TARGET_PRODUCT_SHORT)/$(shell date -u +%H%M)
+
+PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+  ro.alpha.build.version=$(ALPHA_BUILD_VERSION) \
+  ro.alpha.build.date=$(BUILD_DATE) \
+  ro.alpha.buildtype=$(ALPHA_BUILDTYPE) \
+  ro.alpha.fingerprint=$(ROM_FINGERPRINT) \
+  ro.alpha.version=$(ALPHA_VERSION) \
+  ro.alpha.device=$(ALPHA_BUILD) \
+  ro.modversion=$(ALPHA_VERSION)
+
+# Signing
+ifneq (eng,$(TARGET_BUILD_VARIANT))
+ifneq (,$(wildcard vendor/alpha/signing/keys/releasekey.pk8))
+PRODUCT_DEFAULT_DEV_CERTIFICATE := vendor/alpha/signing/keys/releasekey
+ifneq ($(TARGET_NO_OEM_UNLOCK),true)
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.oem_unlock_supported=1
 endif
-
-ifeq ($(strip $(ALPHA_BUILD_TYPE)),)
-  ALPHA_RELEASE_TYPE := Unofficial
-  else
-    ifeq ($(filter-out OFFICIAL Official official, $(strip $(ALPHA_BUILD_TYPE))),)
-      ALPHA_RELEASE_TYPE := Official
-    else
-      ALPHA_RELEASE_TYPE := Unofficial
-  endif
 endif
-
-# TARGET_BUILD_PACKAGE options:
-# 1 - vanilla (default)
-# 2 - microg
-# 3 - gapps
-ifeq ($(TARGET_BUILD_PACKAGE),3)
-  ALPHA_BUILD_VARIANT := gapps
-else
-  ifeq ($(TARGET_BUILD_PACKAGE),2)
-    ALPHA_BUILD_VARIANT := microg
-  else
-    ALPHA_BUILD_VARIANT := vanilla
-  endif
+ifneq (,$(wildcard vendor/alpha/signing/keys/otakey.x509.pem))
+PRODUCT_OTA_PUBLIC_KEYS := vendor/alpha/signing/keys/otakey.x509.pem
 endif
-
-ALPHA_DEVICE := $(ALPHA_BUILD)
-
-# Internal version
-ALPHA_VERSION := $(PLATFORM_VERSION)-$(ALPHA_BUILD_DATE)-$(ALPHA_BUILD_VARIANT)-$(ALPHA_DEVICE)-v$(ALPHA_BUILD_VERSION)
-
-# Display version
-ALPHA_DISPLAY_VERSION := AlphaDroid-$(ALPHA_BUILD_VERSION)-$(ALPHA_BUILD_VARIANT)-$(ALPHA_DEVICE)
-
-PRODUCT_SYSTEM_PROPERTIES += \
-    ro.alpha.version=$(ALPHA_VERSION) \
-    ro.alpha.release.type=$(ALPHA_RELEASE_TYPE) \
-    ro.alpha.build.branch=$(ALPHA_BUILD_BRANCH) \
-    ro.alpha.build.version=$(ALPHA_BUILD_VERSION) \
-    ro.alpha.build.variant=$(ALPHA_BUILD_VARIANT) \
-    ro.alpha.device=$(ALPHA_DEVICE) \
-    ro.alpha.maintainer=$(ALPHA_MAINTAINER)
+endif

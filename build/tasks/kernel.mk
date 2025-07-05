@@ -34,7 +34,6 @@
 #   BOARD_KERNEL_IMAGE_NAME            = Built image name
 #                                          for ARM use: zImage
 #                                          for ARM64 use: Image.gz
-#                                          for x86 use: bzImage
 #                                          for uncompressed use: Image
 #                                          If using an appended DT, append '-dtb'
 #                                          to the end of the image name.
@@ -55,11 +54,6 @@
 #   KERNEL_CC                          = The C Compiler used. This is automatically set based
 #                                          on whether the clang version is set, optional.
 #
-#   KERNEL_CLANG_TRIPLE                = Target triple for clang (e.g. aarch64-linux-gnu-)
-#                                          defaults to arm-linux-gnu- for arm
-#                                                      aarch64-linux-gnu- for arm64
-#                                                      x86_64-linux-gnu- for x86
-#
 #   KERNEL_LTO                         = Optional, force LTO to none / thin / full
 #
 #   NEED_KERNEL_MODULE_ROOT            = Optional, if true, install kernel
@@ -71,8 +65,6 @@
 #
 #   TARGET_FORCE_PREBUILT_KERNEL       = Optional, use TARGET_PREBUILT_KERNEL even if
 #                                          kernel sources are present
-#   TARGET_PREBUILT_KERNEL_HEADERS     = Optional, if this is set, don't warn about prebuilt
-#                                          kernel because headers should match
 #
 #   TARGET_MERGE_DTBS_WILDCARD         = Optional, limits the .dtb files used to generate the
 #                                          final DTB image when using QCOM's merge_dtbs script.
@@ -89,8 +81,6 @@ VARIANT_DEFCONFIG := $(TARGET_KERNEL_VARIANT_CONFIG)
 SELINUX_DEFCONFIG := $(TARGET_KERNEL_SELINUX_CONFIG)
 # dtb generation - optional
 TARGET_MERGE_DTBS_WILDCARD ?= *
-# recovery modules.load fallback - optional
-BOARD_RECOVERY_KERNEL_MODULES_LOAD ?= $(BOARD_RECOVERY_RAMDISK_KERNEL_MODULES_LOAD)
 
 ## Internal variables
 DTC := $(HOST_OUT_EXECUTABLES)/dtc
@@ -106,7 +96,11 @@ KERNEL_CONFIG := $(KERNEL_OUT)/.config
 KERNEL_RELEASE := $(KERNEL_OUT)/include/config/kernel.release
 RECOVERY_KERNEL_CONFIG := $(RECOVERY_KERNEL_OUT)/.config
 RECOVERY_KERNEL_RELEASE := $(RECOVERY_KERNEL_OUT)/include/config/kernel.release
-GKI_SUFFIX := $(shell echo android$(PLATFORM_VERSION)-$(TARGET_KERNEL_VERSION))
+ifneq ($(BOARD_SYSTEM_DLKM_USES_GKI_SUFFIX),false)
+GKI_SUFFIX := /$(shell echo android$(PLATFORM_VERSION)-$(TARGET_KERNEL_VERSION))
+else
+GKI_SUFFIX :=
+endif
 
 ifeq ($(KERNEL_ARCH),x86_64)
 KERNEL_DEFCONFIG_ARCH := x86
@@ -144,15 +138,13 @@ ifeq "$(wildcard $(KERNEL_SRC) )" ""
     endif
 
     ifneq ($(HAS_PREBUILT_KERNEL),)
-        ifeq ($(TARGET_PREBUILT_KERNEL_HEADERS),)
-            $(warning ***************************************************************)
-            $(warning * Using prebuilt kernel binary instead of source              *)
-            $(warning * THIS IS DEPRECATED, AND IS NOT ADVISED.                     *)
-            $(warning * Please configure your device to download the kernel         *)
-            $(warning * source repository to $(KERNEL_SRC))
-            $(warning * for more information                                        *)
-            $(warning ***************************************************************)
-        endif
+        $(warning ***************************************************************)
+        $(warning * Using prebuilt kernel binary instead of source              *)
+        $(warning * THIS IS DEPRECATED, AND IS NOT ADVISED.                     *)
+        $(warning * Please configure your device to download the kernel         *)
+        $(warning * source repository to $(KERNEL_SRC))
+        $(warning * for more information                                        *)
+        $(warning ***************************************************************)
         FULL_KERNEL_BUILD := false
         KERNEL_BIN := $(TARGET_PREBUILT_KERNEL)
     else
@@ -243,13 +235,6 @@ ifeq ($(or $(FULL_RECOVERY_KERNEL_BUILD), $(FULL_KERNEL_BUILD)),true)
 PATH_OVERRIDE := PATH=$(KERNEL_BUILD_OUT_PREFIX)$(HOST_OUT_EXECUTABLES):$$PATH
 ifneq ($(TARGET_KERNEL_CLANG_COMPILE),false)
     ifneq ($(KERNEL_NO_GCC), true)
-        ifeq ($(KERNEL_ARCH),arm64)
-            KERNEL_CLANG_TRIPLE ?= CLANG_TRIPLE=aarch64-linux-gnu-
-        else ifeq ($(KERNEL_ARCH),arm)
-            KERNEL_CLANG_TRIPLE ?= CLANG_TRIPLE=arm-linux-gnu-
-        else ifeq ($(KERNEL_ARCH),x86)
-            KERNEL_CLANG_TRIPLE ?= CLANG_TRIPLE=x86_64-linux-gnu-
-        endif
         PATH_OVERRIDE += LD_LIBRARY_PATH=$(TARGET_KERNEL_CLANG_PATH)/lib64:$$LD_LIBRARY_PATH
     endif
     PATH_OVERRIDE += PATH=$(TARGET_KERNEL_CLANG_PATH)/bin:$$PATH
@@ -259,7 +244,9 @@ ifneq ($(TARGET_KERNEL_CLANG_COMPILE),false)
 endif
 
 ifneq ($(KERNEL_NO_GCC), true)
+ifeq ($(TARGET_KERNEL_NEW_GCC_COMPILE), true)
     PATH_OVERRIDE += PATH=$(KERNEL_TOOLCHAIN_PATH_gcc):$$PATH
+endif
 endif
 
 # System tools are no longer allowed on 10+
@@ -276,25 +263,43 @@ endif
 # Internal implementation of make-kernel-target
 # $(1): output path (The value passed to O=)
 # $(2): target to build (eg. defconfig, modules, dtbo.img)
+ifneq ($(KERNEL_NO_GCC), true)
 define internal-make-kernel-target
-$(PATH_OVERRIDE) $(KERNEL_MAKE_CMD) $(KERNEL_MAKE_FLAGS) TARGET_BOARD_PLATFORM=$(TARGET_BOARD_PLATFORM) -C $(KERNEL_SRC) O=$(KERNEL_BUILD_OUT_PREFIX)$(1) ARCH=$(KERNEL_ARCH) $(KERNEL_CROSS_COMPILE) $(KERNEL_CLANG_TRIPLE) $(KERNEL_CC) $(2)
+$(PATH_OVERRIDE) $(KERNEL_MAKE_CMD) $(KERNEL_MAKE_FLAGS) -C $(KERNEL_SRC) O=$(KERNEL_BUILD_OUT_PREFIX)$(1) ARCH=$(KERNEL_ARCH) $(KERNEL_CROSS_COMPILE) $(KERNEL_CC) $(2)
 endef
+else # KERNEL_NO_GCC = true
+define internal-make-kernel-target
+$(PATH_OVERRIDE) $(KERNEL_MAKE_CMD) $(KERNEL_MAKE_FLAGS) -C $(KERNEL_SRC) O=$(KERNEL_BUILD_OUT_PREFIX)$(1) ARCH=$(KERNEL_ARCH) $(KERNEL_CC) $(2)
+endef
+endif
 
 # Make an external module target
 # $(1): module name
 # $(2): module root path
 # $(3): target to build (eg. modules_install)
+ifneq ($(KERNEL_NO_GCC), true)
 define make-external-module-target
-$(PATH_OVERRIDE) $(KERNEL_MAKE_CMD) $(KERNEL_MAKE_FLAGS) TARGET_BOARD_PLATFORM=$(TARGET_BOARD_PLATFORM) -C $(TARGET_KERNEL_EXT_MODULE_ROOT)/$(1) M=$(2)/$(1) KERNEL_SRC=$(BUILD_TOP)/$(KERNEL_SRC) OUT_DIR=$(KERNEL_BUILD_OUT_PREFIX)$(KERNEL_OUT) O=$(KERNEL_BUILD_OUT_PREFIX)$(KERNEL_OUT) ARCH=$(KERNEL_ARCH) $(KERNEL_CROSS_COMPILE) $(KERNEL_CLANG_TRIPLE) $(KERNEL_CC) $(3)
+$(PATH_OVERRIDE) $(KERNEL_MAKE_CMD) $(KERNEL_MAKE_FLAGS) -C $(TARGET_KERNEL_EXT_MODULE_ROOT)/$(1) M=$(2)/$(1) KERNEL_SRC=$(BUILD_TOP)/$(KERNEL_SRC) OUT_DIR=$(KERNEL_BUILD_OUT_PREFIX)$(KERNEL_OUT) O=$(KERNEL_BUILD_OUT_PREFIX)$(KERNEL_OUT) ARCH=$(KERNEL_ARCH) $(KERNEL_CROSS_COMPILE) $(KERNEL_CC) $(3)
 endef
+else
+define make-external-module-target
+$(PATH_OVERRIDE) $(KERNEL_MAKE_CMD) $(KERNEL_MAKE_FLAGS) -C $(TARGET_KERNEL_EXT_MODULE_ROOT)/$(1) M=$(2)/$(1) KERNEL_SRC=$(BUILD_TOP)/$(KERNEL_SRC) OUT_DIR=$(KERNEL_BUILD_OUT_PREFIX)$(KERNEL_OUT) O=$(KERNEL_BUILD_OUT_PREFIX)$(KERNEL_OUT) ARCH=$(KERNEL_ARCH) $(KERNEL_CC) $(3)
+endef
+endif
 
 # Make an external module target using kbuild
 # $(1): module name
 # $(2): module root path relative to kernel source
 # $(2): target to build (eg. modules_install)
+ifneq ($(KERNEL_NO_GCC), true)
 define make-kbuild-module-target
-$(PATH_OVERRIDE) $(KERNEL_MAKE_CMD) $(KERNEL_MAKE_FLAGS) TARGET_BOARD_PLATFORM=$(TARGET_BOARD_PLATFORM) -C $(BUILD_TOP)/$(KERNEL_SRC) M=$(2)/$(1) O=$(KERNEL_BUILD_OUT_PREFIX)$(KERNEL_OUT) ARCH=$(KERNEL_ARCH) $(KERNEL_CROSS_COMPILE) $(KERNEL_CLANG_TRIPLE) $(KERNEL_CC) $(3)
+$(PATH_OVERRIDE) $(KERNEL_MAKE_CMD) $(KERNEL_MAKE_FLAGS) -C $(BUILD_TOP)/$(KERNEL_SRC) M=$(2)/$(1) O=$(KERNEL_BUILD_OUT_PREFIX)$(KERNEL_OUT) ARCH=$(KERNEL_ARCH) $(KERNEL_CROSS_COMPILE) $(KERNEL_CC) $(3)
 endef
+else
+define make-kbuild-module-target
+$(PATH_OVERRIDE) $(KERNEL_MAKE_CMD) $(KERNEL_MAKE_FLAGS) -C $(BUILD_TOP)/$(KERNEL_SRC) M=$(2)/$(1) O=$(KERNEL_BUILD_OUT_PREFIX)$(KERNEL_OUT) ARCH=$(KERNEL_ARCH) $(KERNEL_CC) $(3)
+endef
+endif
 
 # Generate kernel .config from a given defconfig
 # $(1): Output path (The value passed to O=)
@@ -390,13 +395,9 @@ define build-image-kernel-modules-alpha
         if [ -n "$$(find $(2)/lib/modules$(6) -type f -name $$NAME'.ko')" ]; then \
             echo "$$NAME" >> $(2)/lib/modules$(6)/modules.load; \
         else \
-            echo "ERROR: $$NAME.ko was not found in the kernel modules intermediates dir, module load list must be corrected" 1>&2; \
-            ERROR=1; \
+            echo "ERROR: $$NAME.ko was not found in the kernel modules intermediates dir, module load list must be corrected" 1>&2 && exit 1; \
         fi; \
-    done; \
-    if [ -n "$$ERROR" ]; then \
-        exit 1; \
-    fi; \
+    done
     if [ -n "$(7)" ]; then \
         echo lib/modules$(6)/modules.alias >> "$(7)"; \
         echo lib/modules$(6)/modules.dep >> "$(7)"; \
@@ -475,7 +476,7 @@ else
 KERNEL_VENDOR_RAMDISK_KERNEL_MODULES_LOAD := $(BOARD_VENDOR_RAMDISK_KERNEL_MODULES_LOAD)
 KERNEL_VENDOR_RAMDISK_MODULES_OUT := $(TARGET_RAMDISK_OUT)
 KERNEL_VENDOR_RAMDISK_DEPMOD_STAGING_DIR := $(KERNEL_BUILD_OUT_PREFIX)$(call intermediates-dir-for,PACKAGING,depmod_ramdisk)
-$(INSTALLED_RAMDISK_TARGET): $(TARGET_PREBUILT_INT_KERNEL)
+$(INTERNAL_VENDOR_RAMDISK_TARGET): $(TARGET_PREBUILT_INT_KERNEL)
 endif
 
 ifneq ($(RECOVERY_KERNEL_MODULES),)
@@ -494,7 +495,7 @@ $(KERNEL_CONFIG): $(KERNEL_OUT) $(ALL_KERNEL_DEFCONFIG_SRCS)
 $(TARGET_PREBUILT_INT_KERNEL): $(KERNEL_CONFIG) $(DEPMOD) $(DTC) $(KERNEL_MODULES_PARTITION_FILE_LIST) $(SYSTEM_KERNEL_MODULES_PARTITION_FILE_LIST)
 	@echo "Building Kernel Image ($(BOARD_KERNEL_IMAGE_NAME))"
 	$(call make-kernel-target,$(BOARD_KERNEL_IMAGE_NAME))
-	$(hide) if [ -d "$(KERNEL_SRC)/arch/$(KERNEL_ARCH)/boot/dts/" ]; then \
+	$(hide) if grep -q '^CONFIG_OF=y' $(KERNEL_CONFIG); then \
 			echo "Building DTBs"; \
 			$(call make-kernel-target,dtbs); \
 		fi
@@ -560,7 +561,7 @@ $(TARGET_PREBUILT_INT_KERNEL): $(KERNEL_CONFIG) $(DEPMOD) $(DTC) $(KERNEL_MODULE
 					if [ -n "$$p" ]; then echo $$p; else echo "ERROR: $$m from RECOVERY_KERNEL_MODULES was not found" 1>&2 && exit 1; fi; \
 				done); \
 				[ $$? -ne 0 ] && exit 1; \
-				($(call build-image-kernel-modules-alpha,$$recovery_modules,$(KERNEL_RECOVERY_MODULES_OUT),,$(KERNEL_RECOVERY_DEPMOD_STAGING_DIR),$(BOARD_RECOVERY_KERNEL_MODULES_LOAD),,,)) || exit "$$?"; \
+				($(call build-image-kernel-modules-alpha,$$recovery_modules,$(KERNEL_RECOVERY_MODULES_OUT),,$(KERNEL_RECOVERY_DEPMOD_STAGING_DIR),$(BOARD_RECOVERY_RAMDISK_KERNEL_MODULES_LOAD),,,)) || exit "$$?"; \
 			) \
 		fi
 
@@ -568,7 +569,7 @@ $(TARGET_PREBUILT_INT_KERNEL): $(KERNEL_CONFIG) $(DEPMOD) $(DTC) $(KERNEL_MODULE
 kerneltags: $(KERNEL_CONFIG)
 	$(call make-kernel-target,tags)
 
-.PHONY: kernelsavedefconfig alldefconfig kernelconfig recoverykernelconfig
+.PHONY: kernelsavedefconfig alldefconfig
 
 kernelsavedefconfig: $(KERNEL_OUT)
 	$(call make-kernel-config,$(KERNEL_OUT),$(BASE_KERNEL_DEFCONFIG))
@@ -578,14 +579,6 @@ kernelsavedefconfig: $(KERNEL_OUT)
 alldefconfig: $(KERNEL_OUT)
 	env KCONFIG_NOTIMESTAMP=true \
 		 $(call make-kernel-target,alldefconfig)
-
-kernelconfig: $(KERNEL_OUT) $(ALL_KERNEL_DEFCONFIG_SRCS)
-	@echo "Building Kernel Config"
-	$(call make-kernel-config,$(KERNEL_OUT),$(KERNEL_DEFCONFIG))
-
-recoverykernelconfig: $(KERNEL_OUT) $(ALL_RECOVERY_KERNEL_DEFCONFIG_SRCS)
-	@echo "Building Recovery Kernel Config"
-	$(call make-kernel-config,$(RECOVERY_KERNEL_OUT),$(RECOVERY_DEFCONFIG))
 
 ifeq (true,$(filter true, $(TARGET_NEEDS_DTBOIMAGE) $(BOARD_KERNEL_SEPARATED_DTBO)))
 ifneq ($(BOARD_CUSTOM_DTBOIMG_MK),)
@@ -663,7 +656,7 @@ ifeq ($(BOARD_USES_QCOM_MERGE_DTBS_SCRIPT),true)
 	$(hide) find $(DTBS_OUT) -type f -name "*.dtb*" | xargs rm -f
 	mv $(DTB_OUT)/arch/$(KERNEL_ARCH)/boot/dts/vendor/*/*.dtb $(DTB_OUT)/arch/$(KERNEL_ARCH)/boot/dts/vendor/*/*.dtbo $(DTBS_BASE)/
 	PATH=$(abspath $(HOST_OUT_EXECUTABLES)):$${PATH} python3 $(BUILD_TOP)/vendor/alpha/build/tools/merge_dtbs.py --base $(DTBS_BASE) --techpack $(DTB_OUT)/arch/$(KERNEL_ARCH)/boot/dts/vendor/qcom --out $(DTBS_OUT)
-	cat $(shell find $(DTBS_OUT) -type f -name "${TARGET_MERGE_DTBS_WILDCARD}.dtb" | sort) > $@
+	cat $(shell find $(DTB_OUT)/out -type f -name "${TARGET_MERGE_DTBS_WILDCARD}.dtb" | sort) > $@
 else
 	cat $(shell find $(DTB_OUT)/arch/$(KERNEL_ARCH)/boot/dts -type f -name "*.dtb" | sort) > $@
 endif # BOARD_USES_QCOM_MERGE_DTBS_SCRIPT

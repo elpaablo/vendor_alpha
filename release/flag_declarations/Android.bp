@@ -13,7 +13,7 @@
 // limitations under the License.
 
 build_flag_declarations {
-    name: "build_flags-build-release-alpha",
+    name: "build_flags-build-release-calyx",
     srcs: [
         "RELEASE_*.textproto",
     ],

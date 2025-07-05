@@ -1,3 +1,6 @@
+# Inherit common stuff
+$(call inherit-product, vendor/alpha/config/common.mk)
+
 # Sensitive Phone Numbers list
 PRODUCT_PACKAGES += \
     sensitive_pn.xml
@@ -6,18 +9,15 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     apns-conf.xml
 
-# Telephony packages
+# SIM Toolkit
 PRODUCT_PACKAGES += \
-    messaging \
     Stk
 
-# Tethering - allow without requiring a provisioning app
-# (for devices that check this)
-PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
-    net.tethering.noprovisioning=true
+# Wallet app for Power menu integration
+# https://source.android.com/devices/tech/connect/quick-access-wallet
+PRODUCT_PACKAGES += \
+    QuickAccessWallet
 
-# Disable mobile data by default
+# Enable support of one-handed mode
 PRODUCT_PRODUCT_PROPERTIES += \
-    ro.com.android.mobiledata=false
-
-$(call inherit-product, vendor/alpha/config/common.mk)
+    ro.support_one_handed_mode=true
